@@ -1,0 +1,253 @@
+msgid ""
+msgstr ""
+"Content-Type: text/plain; charset=UTF-8\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+
+msgid "Next"
+msgstr "Дальше"
+
+msgid "Ready"
+msgstr "Готово"
+
+msgid "Waiting for installation to complete"
+msgstr "Ожидание завершения установки"
+
+msgid "Installer"
+msgstr "Установщик"
+
+msgid "Are you sure you want to cancel the installation ?"
+msgstr "Вы действительно хотите отменить установку ?"
+
+msgid "Do you really want to exit ?"
+msgstr "Вы действительно хотите выйти ?"
+
+msgid "No"
+msgstr "Нет"
+
+msgid "Yes"
+msgstr "Да"
+
+msgid "Installation"
+msgstr "Установка"
+
+msgid "Package"
+msgstr "Пакет"
+
+msgid "Package"
+msgstr "Пакет"
+
+msgid "Count"
+msgstr "Количество"
+
+msgid "Select"
+msgstr "Выбрать"
+
+msgid "Back"
+msgstr "Назад"
+
+msgid "Restart"
+msgstr "Перезагрузка"
+
+msgid "Cancel"
+msgstr "Отмена"
+
+msgid "Start install"
+msgstr "Начать установку"
+
+msgid "Exit"
+msgstr "Выйти"
+
+msgid "Language selection"
+msgstr "Выбор языка"
+
+msgid "Image selection"
+msgstr "Выбор образа"
+
+msgid "Disk selection"
+msgstr "Выбор диска"
+
+msgid "Filesystem selection"
+msgstr "Выбор файловой системы"
+
+msgid "Bootloader selection"
+msgstr "Выбор загрузчика"
+
+msgid "User selection"
+msgstr "Выбор пользователя"
+
+msgid "Summary"
+msgstr "Итог"
+
+msgid "Installation"
+msgstr "Установка"
+
+msgid "Add your image"
+msgstr "Добавить свой образ"
+
+msgid "GNOME Image. Recommended"
+msgstr "Образ GNOME. Рекомендуемый"
+
+msgid "GNOME image for NVIDIA. OPEN driver"
+msgstr "Образ GNOME для NVIDIA. OPEN драйвер"
+
+msgid "KDE image. In testing phase, not recommended"
+msgstr "Образ KDE. Находится в стадии тестирования, не рекомендуется"
+
+msgid "KDE image for NVIDIA. In testing, not recommended"
+msgstr "Образ KDE для NVIDIA. Находится в стадии тестирования, не рекомендуется"
+
+msgid "Disk size"
+msgstr "Диск размером"
+
+msgid "Error executing command (check that skopeo is installed)"
+msgstr "Ошибка выполнения команды (проверьте, что skopeo установлен)"
+
+msgid "Enter the image link"
+msgstr "Введите ссылку на образ"
+
+msgid "Check and add"
+msgstr "Проверить и добавить"
+
+msgid "Enter your image manually and check"
+msgstr "Ввести свой образ вручную и проверить"
+
+msgid "Empty description"
+msgstr "Нет описания"
+
+msgid "Please enter a valid image name"
+msgstr "Введите корректное имя образа"
+
+msgid "The image has been verified and added to the list"
+msgstr "Образ проверен и добавлен в список"
+
+msgid "Image verification error"
+msgstr "Ошибка проверки образа"
+
+msgid "First check the entered image"
+msgstr "Сперва проверьте введённый образ"
+
+msgid "unknown model"
+msgstr "неизвестная модель"
+
+msgid "btrfs – recommended choice, works well with atomic image"
+msgstr "btrfs – рекомендуемый выбор, хорошо сочетается с атомарным образом"
+
+msgid "ext4 – classic, proven file system"
+msgstr "ext4 – классическая, проверенная ФС"
+
+msgid "UEFI (recommended for modern systems)"
+msgstr "UEFI (рекомендуется для современных систем)"
+
+msgid "LEGACY (compatible variant)"
+msgstr "LEGACY (совместимый вариант)"
+
+msgid "LEGACY (UEFI not supported)"
+msgstr "LEGACY (UEFI не поддерживается)"
+
+msgid "Your computer supports UEFI boot - this is the recommended choice"
+msgstr "Ваш компьютер поддерживает UEFI загрузку - это рекомендуемый выбор"
+
+msgid "UEFI is not supported on this system, use LEGACY"
+msgstr "UEFI не поддерживается на данной системе, используем LEGACY"
+
+msgid "UEFI mode is selected - this is the recommended choice for modern systems"
+msgstr "Выбран режим UEFI - это рекомендуемый выбор для современных систем."
+
+msgid "LEGACY is selected - a more compatible option for BIOS/UEFI"
+msgstr "Выбран LEGACY - более совместимый вариант для BIOS/UEFI"
+
+msgid "Login and password cannot be empty"
+msgstr "Логин и пароль не могут быть пустыми"
+
+msgid "The login must contain only Latin letters and numbers"
+msgstr "Логин должен содержать только латинские буквы и цифры"
+
+msgid "Passwords do not match. Try again"
+msgstr "Пароли не совпадают. Попробуйте снова"
+
+msgid "Login verification error"
+msgstr "Ошибка проверки логина"
+
+msgid "Login cannot consist only of numbers"
+msgstr "Логин не может состоять только из цифр"
+
+msgid "Filesystem"
+msgstr "Файловая система"
+
+msgid "Selected disk"
+msgstr "Выбранный диск"
+
+msgid "System language"
+msgstr "Язык системы"
+
+msgid "Selected image"
+msgstr "Выбранный образ"
+
+msgid "Bootloader"
+msgstr "Загрузчик"
+
+msgid "User"
+msgstr "Пользователь"
+
+msgid "Login"
+msgstr "Логин"
+
+msgid "Login"
+msgstr "Логин"
+
+msgid "Password"
+msgstr "Пароль"
+
+msgid "Repeat password"
+msgstr "Повторите пароль"
+
+msgid "Start installation"
+msgstr "Начало установки"
+
+#: status.createdCommit
+msgid "Creating ostree repository"
+msgstr "Создание ostree репозитория"
+
+#: status.downloadImage
+msgid "Downloading image: %s"
+msgstr "Скачивание образа: %s"
+
+#: status.notStarted
+msgid "Starting installation"
+msgstr "Начало установки"
+
+#: status.checkingEnvironment
+msgid "Checking required commands and environment"
+msgstr "Проверка наличия необходимых команд и окружения"
+
+#: status.remountingTmp
+msgid "Checking temporary directory"
+msgstr "Проверка временной директории"
+
+#: status.preparingDisk
+msgid "Preparing disk: cleaning, partitioning"
+msgstr "Подготовка диска: очистка, разметка"
+
+#: status.installingSystem
+msgid "Installing system"
+msgstr "Выполнение установки системы"
+
+#: status.configuringSystem
+msgid "Configuring system"
+msgstr "Настройка системы"
+
+#: status.finalizingInstallation
+msgid "Finalizing installation, verification and cleanup"
+msgstr "Финальное завершение установки, проверка и очистка"
+
+#: status.completed
+msgid "Installation completed successfully"
+msgstr "Установка завершена успешно"
+
+#: status.error
+msgid "Installation error"
+msgstr "Ошибка установки"
+
+#: status.unknown
+msgid "Unknown status"
+msgstr "Неизвестный статус"
