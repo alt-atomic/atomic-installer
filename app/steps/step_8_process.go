@@ -120,7 +120,7 @@ func CreateInstallProgressStep(window *adw.ApplicationWindow, chosenLang, chosen
 	installService := install.NewInstallerService(installData)
 	watchNewLog()
 	watchStatus(installService, cancelBtn)
-	//go installService.RunInstall()
+	go installService.RunInstall()
 
 	return outerBox
 }
