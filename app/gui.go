@@ -116,9 +116,7 @@ func (i *InstallerViewService) OnActivate(app *adw.Application) {
 	var stepsArr []func() gtk.Widgetter
 
 	// Функция, которая будет обновлять отображение контента
-	var updateStep func()
-
-	updateStep = func() {
+	updateStep := func() {
 		stepLabel.SetLabel(i.getStepTitles()[currentStep])
 
 		// Создаём новый box

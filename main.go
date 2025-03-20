@@ -79,7 +79,7 @@ func checkCommands() error {
 	}
 	for _, cmd := range commands {
 		if _, err = exec.LookPath(cmd); err != nil {
-			return fmt.Errorf("comman %s not found in PATH", cmd)
+			return fmt.Errorf("command %s not found in PATH", cmd)
 		}
 	}
 	return nil
