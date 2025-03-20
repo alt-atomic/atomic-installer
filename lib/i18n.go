@@ -20,12 +20,9 @@ import (
 	"fmt"
 	"golang.org/x/text/language"
 	"os"
-	"path/filepath"
 
 	"github.com/leonelquinteros/gotext"
 )
-
-var Locale *gotext.Locale
 
 // InitLocales initializes translations using gotext.
 func InitLocales() {
@@ -35,15 +32,8 @@ func InitLocales() {
 		panic(err)
 	}
 
-	gotext.Configure(Env.PathLocales, Env.Language.String(), "default")
-	Locale = gotext.NewLocale(Env.PathLocales, Env.Language.String())
-
-	localeFile := filepath.Join(Env.PathLocales, Env.Language.String(), "LC_MESSAGES", "default.po")
-	if _, err := os.Stat(localeFile); err != nil {
-		Log.Warn(fmt.Sprintf("Translation file not found: %s", localeFile))
-	} else {
-		Log.Info(fmt.Sprintf("Translation file loaded: %s", localeFile))
-	}
+	gotext.Configure(Env.PathLocales, Env.Language.String(), "installer")
+	gotext.NewLocale(Env.PathLocales, Env.Language.String())
 
 	Log.Info("Translations successfully initialized")
 }
@@ -56,8 +46,8 @@ func SetLanguage(lang string) {
 		return
 	}
 	Env.Language = newLang
-	gotext.Configure(Env.PathLocales, Env.Language.String(), "default")
-	Locale = gotext.NewLocale(Env.PathLocales, Env.Language.String())
+	gotext.Configure(Env.PathLocales, Env.Language.String(), "installer")
+	gotext.NewLocale(Env.PathLocales, Env.Language.String())
 	Log.Info(fmt.Sprintf("Language switched to: %s", lang))
 }
 
