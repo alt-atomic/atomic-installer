@@ -53,10 +53,5 @@ func SetLanguage(lang string) {
 
 // T returns the translated string for the given message ID.
 func T(messageID string) string {
-	translation := gotext.Get(messageID)
-	if translation == messageID {
-		return translation
-	}
-
-	return translation
+	return gotext.Get(messageID)
 }
