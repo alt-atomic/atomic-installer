@@ -36,7 +36,6 @@ import (
 type InstallerService struct {
 	data   InstallerData
 	Status *SafeStatus
-	ctx    context.Context
 }
 
 // NewInstallerService — конструктор сервиса
