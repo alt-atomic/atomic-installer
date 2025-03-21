@@ -33,7 +33,6 @@ func InitLocales() {
 	}
 
 	gotext.Configure(Env.PathLocales, Env.Language.String(), "installer")
-	gotext.NewLocale(Env.PathLocales, Env.Language.String())
 
 	Log.Info("Translations successfully initialized")
 }
@@ -47,7 +46,6 @@ func SetLanguage(lang string) {
 	}
 	Env.Language = newLang
 	gotext.Configure(Env.PathLocales, Env.Language.String(), "installer")
-	gotext.NewLocale(Env.PathLocales, Env.Language.String())
 	Log.Info(fmt.Sprintf("Language switched to: %s", lang))
 }
 
