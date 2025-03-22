@@ -31,24 +31,40 @@ type Environment struct {
 
 var Env Environment
 
+// Глобальные переменные для возможности переопределения значений при сборке
+var (
+	BuildPathLocales string
+	BuildPathLogFile string
+)
+
 func InitConfig() {
 	var configPath string
-	if _, err := os.Stat("config.yml"); err == nil {
-		configPath = "config.yml"
-	} else if _, err = os.Stat("/etc/installer/config.yml"); err == nil {
-		configPath = "/etc/installer/config.yml"
-	} else {
-		panic("Configuration file not found in /etc/installer/config.yml or in local directory")
+
+	if BuildPathLocales != "" {
+		Env.PathLocales = BuildPathLocales
+	}
+	if BuildPathLogFile != "" {
+		Env.PathLogFile = BuildPathLogFile
 	}
 
-	err := cleanenv.ReadConfig(configPath, &Env)
-	if err != nil {
-		panic(err)
+	// Ищем конфигурационный файл в текущей директории
+	if _, err := os.Stat("config.yml"); err == nil {
+		configPath = "config.yml"
+	} else if _, err = os.Stat("/etc/apm/config.yml"); err == nil {
+		configPath = "/etc/apm/config.yml"
+	}
+
+	// Если найден конфигурационный файл, читаем его
+	if configPath != "" {
+		err := cleanenv.ReadConfig(configPath, &Env)
+		if err != nil {
+			Log.Fatal(err)
+		}
 	}
 
 	// Проверяем и создаём путь для лог-файла
-	if err = EnsurePath(Env.PathLogFile); err != nil {
-		panic(err)
+	if err := EnsurePath(Env.PathLogFile); err != nil {
+		Log.Fatal(err)
 	}
 }
 
