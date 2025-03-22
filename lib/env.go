@@ -50,8 +50,8 @@ func InitConfig() {
 	// Ищем конфигурационный файл в текущей директории
 	if _, err := os.Stat("config.yml"); err == nil {
 		configPath = "config.yml"
-	} else if _, err = os.Stat("/etc/apm/config.yml"); err == nil {
-		configPath = "/etc/apm/config.yml"
+	} else if _, err = os.Stat("/etc/atomic-installer/config.yml"); err == nil {
+		configPath = "/etc/atomic-installer/config.yml"
 	}
 
 	// Если найден конфигурационный файл, читаем его
