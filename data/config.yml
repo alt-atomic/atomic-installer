@@ -1,2 +1,2 @@
-pathLocales: "/var/installer/locales"
+pathLocales: "/usr/share/locale"
 pathLogFile: "/var/log/installer.log"
