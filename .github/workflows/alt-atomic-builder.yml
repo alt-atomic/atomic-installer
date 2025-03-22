@@ -21,7 +21,7 @@ jobs:
           go-version: '1.24'
 
       - name: Install system dependencies
-        run: sudo apt-get update && sudo apt-get install -y pkg-config libglib2.0-dev libgirepository1.0-dev libcairo2-dev libgraphene-1.0-dev
+        run: sudo apt-get update && sudo apt-get install -y libgtk-4-dev libadwaita-1-dev libgirepository1.0-dev libcairo2-dev libpango1.0-dev libepoxy-dev libgdk-pixbuf2.0-dev
 
       - name: Build binary
         run: |
