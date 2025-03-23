@@ -21,6 +21,7 @@ import (
 	"context"
 	"fmt"
 	"github.com/creack/pty"
+	"github.com/sirupsen/logrus"
 	"installer/app/utility"
 	"installer/lib"
 	"os"
@@ -114,9 +115,9 @@ func (i *InstallerService) checkAndRemountTmp() {
 	total := float64(stat.Blocks*uint64(stat.Bsize)) / (1 << 30)
 	lib.Log.Infof("Current /tmp size: %.2f GB", total)
 
-	// If less than 6 GB, attempt to remount /tmp
-	if total < 6.0 {
-		cmd := exec.Command("mount", "-o", "remount,size=6G", "/tmp")
+	// If less than 5 GB, attempt to remount /tmp
+	if total < 5.0 {
+		cmd := exec.Command("mount", "-o", "remount,size=5G", "/tmp")
 		output, err := cmd.CombinedOutput()
 		if err != nil {
 			lib.Log.Errorf("Error remounting /tmp: %v (output: %s)", err, string(output))
@@ -143,9 +144,15 @@ func (i *InstallerService) cleanupTemporaryPartition(ctx context.Context, partit
 	lib.Log.Info("Удаление временного раздела и расширение root-раздела...")
 
 	// Размонтируем временный раздел
-	lib.Log.Info("Размонтирование временного раздела %s...", partitions["temp"].Path)
+	lib.Log.Infof("Размонтирование временного раздела %s...", partitions["temp"].Path)
 	if err := i.unmount(ctx, containerDir); err != nil {
 		return fmt.Errorf("ошибка размонтирования временного раздела: %v", err)
+	}
+
+	// Размонтируем временный раздел
+	lib.Log.Infof("Размонтирование временного раздела %s...", "/var/tmp")
+	if err := i.unmount(ctx, "/var/tmp"); err != nil {
+		logrus.Errorf("ошибка размонтирования временного раздела: %v", err)
 	}
 
 	// Удаляем временный раздел
@@ -256,7 +263,7 @@ func (i *InstallerService) freeDisk() {
 // prepareDisk выполняет подготовку диска
 func (i *InstallerService) prepareDisk(ctx context.Context) error {
 	i.Status.SetStatus(StatusPreparingDisk)
-	paths := []string{"/mnt/target/boot/efi", "/mnt/target/boot", containerDir, "/mnt/target"}
+	paths := []string{"/mnt/target/boot/efi", "/mnt/target/boot", containerDir, "/mnt/target", "/var/tmp"}
 
 	for _, path := range paths {
 		_ = i.unmount(ctx, path)
@@ -469,6 +476,18 @@ func (i *InstallerService) installToFilesystem(ctx context.Context) error {
 		"sh", "-c", installCmd,
 	)
 
+	tmpDir := containerDir + "/tmp"
+
+	if err = os.MkdirAll(tmpDir, 0755); err != nil {
+		return fmt.Errorf("failed to create directory: %v", err)
+	}
+
+	// /var/tmp → /var/lib/containers/tmp
+	cmdMount := exec.Command("mount", "--bind", tmpDir, "/var/tmp")
+	if output, err := cmdMount.CombinedOutput(); err != nil {
+		return fmt.Errorf("bind mount failed: %v\n%s", err, string(output))
+	}
+
 	// Устанавливаем переменную окружения для поддержки TTY.
 	env := os.Environ()
 	env = append(env, "TERM=xterm-256color")
@@ -479,7 +498,7 @@ func (i *InstallerService) installToFilesystem(ctx context.Context) error {
 	// Запускаем команду через pty
 	ptmx, err := pty.Start(cmd)
 	if err != nil {
-		return fmt.Errorf("не удалось запустить команду с pty: %v", err)
+		return fmt.Errorf("failed to run command from pty: %v", err)
 	}
 	defer func() { _ = ptmx.Close() }()
 
@@ -497,11 +516,20 @@ func (i *InstallerService) installToFilesystem(ctx context.Context) error {
 	buf := make([]byte, 0, 64*1024)
 	scanner.Buffer(buf, 100*1024*1024)
 
+	// Хотим хранить только последние 5 строк для ошибки
+	const maxLines = 5
+	linesBuffer := make([]string, 0, maxLines)
+
 	var lastUpdate time.Time
 	updateInterval := 500 * time.Millisecond
 	for scanner.Scan() {
 		line := scanner.Text()
 		matches := progressRegex.FindStringSubmatch(line)
+		linesBuffer = append(linesBuffer, line)
+		if len(linesBuffer) > maxLines {
+			linesBuffer = linesBuffer[len(linesBuffer)-maxLines:]
+		}
+
 		fmt.Println(line)
 		if len(matches) == 4 {
 			downloaded := matches[1]
@@ -521,11 +549,14 @@ func (i *InstallerService) installToFilesystem(ctx context.Context) error {
 	}
 
 	if err = scanner.Err(); err != nil {
-		lib.Log.Errorf("ошибка чтения вывода: %v", err)
+		lib.Log.Errorf("error reading output: %v", err)
 	}
 
 	if err = cmd.Wait(); err != nil {
-		return fmt.Errorf("ошибка выполнения команды: %v", err)
+		return fmt.Errorf(
+			"error install: %s",
+			strings.Join(linesBuffer, "\n"),
+		)
 	}
 
 	i.unmountDisk(efiMountPoint)
