@@ -20,11 +20,14 @@ import (
 	"fmt"
 	"github.com/diamondburned/gotk4-adwaita/pkg/adw"
 	"github.com/diamondburned/gotk4/pkg/gtk/v4"
+	"golang.org/x/text/language"
 	"installer/app/image"
+	"installer/app/utility"
 	"installer/lib"
 )
 
-var chosenLangIndex int = 0
+// Изначально chosenLangIndex = -1 означает, что выбор еще не задан
+var chosenLangIndex int = -1
 
 // CreateLanguageStep – шаг выбора языка.
 func CreateLanguageStep(window *adw.ApplicationWindow, updateStep func(), onLanguageSelected func(string), onCancel func()) gtk.Widgetter {
@@ -55,6 +58,17 @@ func CreateLanguageStep(window *adw.ApplicationWindow, updateStep func(), onLang
 	combo.SetSizeRequest(300, -1)
 	for _, lang := range languages {
 		combo.AppendText(lang)
+	}
+
+	// Инициализировать выбранный язык по умолчанию только при первом запуске
+	if chosenLangIndex == -1 {
+		locale := utility.GetSystemLocale()
+		switch locale {
+		case language.English:
+			chosenLangIndex = 1
+		default:
+			chosenLangIndex = 0
+		}
 	}
 	combo.SetActive(chosenLangIndex)
 

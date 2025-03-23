@@ -17,6 +17,7 @@
 package lib
 
 import (
+	"fmt"
 	"github.com/ilyakaznacheev/cleanenv"
 	"golang.org/x/text/language"
 	"os"
@@ -58,13 +59,13 @@ func InitConfig() {
 	if configPath != "" {
 		err := cleanenv.ReadConfig(configPath, &Env)
 		if err != nil {
-			Log.Fatal(err)
+			Log.Fatal(fmt.Errorf("error reading config path %s, error: %v", configPath, err))
 		}
 	}
 
 	// Проверяем и создаём путь для лог-файла
 	if err := EnsurePath(Env.PathLogFile); err != nil {
-		Log.Fatal(err)
+		Log.Fatal(fmt.Errorf("error initializing locale: %s, file: %v", Env.PathLogFile, err))
 	}
 }
 
