@@ -49,7 +49,19 @@ func SetLanguage(lang string) {
 	Log.Info(fmt.Sprintf("Language switched to: %s", lang))
 }
 
-// T returns the translated string for the given message ID.
-func T(messageID string) string {
+// T_ T возвращает переведенную строку для заданного messageID.
+func T_(messageID string) string {
 	return gotext.Get(messageID)
+}
+
+func TN_(messageID string, pluralMessageID string, count int) string {
+	return gotext.GetN(messageID, pluralMessageID, count)
+}
+
+func TC_(messageID string, context string) string {
+	return gotext.GetC(messageID, context)
+}
+
+func TD_(domain string, messageID string) string {
+	return gotext.GetD(domain, messageID)
 }

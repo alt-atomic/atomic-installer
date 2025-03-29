@@ -25,7 +25,7 @@ import (
 )
 
 // CreateFilesystemStep возвращает GUI-шаг выбора файловой системы.
-func CreateFilesystemStep(onFsSelected func(string), onCancel func()) gtk.Widgetter {
+func CreateFilesystemStep(onFsSelected func(string)) gtk.Widgetter {
 	outerBox := gtk.NewBox(gtk.OrientationVertical, 12)
 	outerBox.SetMarginTop(20)
 	outerBox.SetMarginBottom(20)
@@ -70,7 +70,7 @@ func CreateFilesystemStep(onFsSelected func(string), onCancel func()) gtk.Widget
 	centerBox.Append(noteLabel)
 
 	// Изначально для btrfs
-	noteLabel.SetLabel(lib.T("btrfs – recommended choice, works well with atomic image"))
+	noteLabel.SetLabel(lib.T_("btrfs – recommended choice, works well with atomic image"))
 
 	// Меняем описание при смене выбора
 	combo.ConnectChanged(func() {
@@ -80,9 +80,9 @@ func CreateFilesystemStep(onFsSelected func(string), onCancel func()) gtk.Widget
 			return
 		}
 		if activeIndex == 0 {
-			noteLabel.SetLabel(lib.T("btrfs – recommended choice, works well with atomic image"))
+			noteLabel.SetLabel(lib.T_("btrfs – recommended choice, works well with atomic image"))
 		} else {
-			noteLabel.SetLabel(lib.T("ext4 – classic, proven file system"))
+			noteLabel.SetLabel(lib.T_("ext4 – classic, proven file system"))
 		}
 	})
 
@@ -91,23 +91,12 @@ func CreateFilesystemStep(onFsSelected func(string), onCancel func()) gtk.Widget
 	buttonBox.SetHAlign(gtk.AlignCenter)
 	buttonBox.SetMarginTop(20)
 
-	cancelBtn := gtk.NewButtonWithLabel(lib.T("Back"))
-	chooseBtn := gtk.NewButtonWithLabel(lib.T("Select"))
-
-	cancelBtn.SetSizeRequest(120, 40)
-	chooseBtn.SetSizeRequest(120, 40)
+	chooseBtn := gtk.NewButtonWithLabel(lib.T_("Continue"))
+	chooseBtn.SetSizeRequest(150, 45)
 	chooseBtn.AddCSSClass("suggested-action")
 
-	buttonBox.Append(cancelBtn)
 	buttonBox.Append(chooseBtn)
 	outerBox.Append(buttonBox)
-
-	// Обработчик "Назад"
-	cancelBtn.ConnectClicked(func() {
-		if onCancel != nil {
-			onCancel()
-		}
-	})
 
 	// Обработчик "Выбрать"
 	chooseBtn.ConnectClicked(func() {

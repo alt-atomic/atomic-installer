@@ -35,7 +35,7 @@ type DiskInfo struct {
 }
 
 // CreateDiskStep – виджет для выбора диска
-func CreateDiskStep(onDiskSelected func(string), onCancel func()) gtk.Widgetter {
+func CreateDiskStep(onDiskSelected func(string)) gtk.Widgetter {
 	outerBox := gtk.NewBox(gtk.OrientationVertical, 12)
 	outerBox.SetMarginTop(20)
 	outerBox.SetMarginBottom(20)
@@ -78,34 +78,22 @@ func CreateDiskStep(onDiskSelected func(string), onCancel func()) gtk.Widgetter 
 	}
 	centerBox.Append(combo)
 
-	// Лейбл для описания
-	descLabel := gtk.NewLabel(fmt.Sprintf("%s ≥ 60 ГБ", lib.T("Disk size")))
+	descLabel := gtk.NewLabel(fmt.Sprintf("%s ≥ 60 ГБ", lib.T_("Disk size")))
 	descLabel.SetHAlign(gtk.AlignStart)
 	descLabel.SetMarginTop(10)
 	descLabel.SetHAlign(gtk.AlignCenter)
 	centerBox.Append(descLabel)
 
-	// Горизонтальный контейнер для кнопок внизу
 	buttonBox := gtk.NewBox(gtk.OrientationHorizontal, 20)
 	buttonBox.SetHAlign(gtk.AlignCenter)
 	buttonBox.SetMarginTop(20)
 
-	cancelBtn := gtk.NewButtonWithLabel(lib.T("Back"))
-	chooseBtn := gtk.NewButtonWithLabel(lib.T("Select"))
-
-	cancelBtn.SetSizeRequest(120, 40)
-	chooseBtn.SetSizeRequest(120, 40)
+	chooseBtn := gtk.NewButtonWithLabel(lib.T_("Continue"))
+	chooseBtn.SetSizeRequest(150, 45)
 	chooseBtn.AddCSSClass("suggested-action")
 
-	buttonBox.Append(cancelBtn)
 	buttonBox.Append(chooseBtn)
 	outerBox.Append(buttonBox)
-
-	cancelBtn.ConnectClicked(func() {
-		if onCancel != nil {
-			onCancel()
-		}
-	})
 
 	chooseBtn.ConnectClicked(func() {
 		active := combo.Active()
@@ -135,7 +123,7 @@ func getAvailableDisks() []DiskInfo {
 
 		if len(fields) == 3 {
 			name, sizeStr, devType = fields[0], fields[1], fields[2]
-			model = lib.T("unknown model")
+			model = lib.T_("unknown model")
 		} else if len(fields) >= 4 {
 			name, sizeStr, devType, model = fields[0], fields[1], fields[2], fields[3]
 		}

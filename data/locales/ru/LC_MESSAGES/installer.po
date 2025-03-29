@@ -251,3 +251,27 @@ msgstr "Ошибка установки"
 #: status.unknown
 msgid "Unknown status"
 msgstr "Неизвестный статус"
+
+msgid "Continue"
+msgstr "Продолжить"
+
+msgid "Checking device..."
+msgstr "Проверка устройства"
+
+msgid "Checking device..."
+msgstr "Проверка устройства..."
+
+msgid "Device check"
+msgstr "Проверка устройства"
+
+msgid "The device is ready for installation!"
+msgstr "Устройство готово к установке!"
+
+msgid "Check your internet connection"
+msgstr "Проверьте подключение к Интернету"
+
+msgid "Error getting disk list"
+msgstr "Ошибка получения списка дисков"
+
+msgid "Insufficient disk space. At least 60GB required"
+msgstr "Недостаточно места на диске. Требуется не менее 60 ГБ"

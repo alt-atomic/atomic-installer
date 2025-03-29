@@ -50,7 +50,7 @@ func CreateInstallProgressStep(window *adw.ApplicationWindow, chosenLang, chosen
 
 	statusLabel = gtk.NewLabel("")
 	statusLabel.SetUseMarkup(true)
-	statusLabel.SetLabel(fmt.Sprintf("<big><b>%s</b></big>", lib.T("Start installation")))
+	statusLabel.SetLabel(fmt.Sprintf("<big><b>%s</b></big>", lib.T_("Start installation")))
 	statusLabel.SetHAlign(gtk.AlignCenter)
 	statusLabel.SetVAlign(gtk.AlignStart)
 	outerBox.Append(statusLabel)
@@ -73,8 +73,8 @@ func CreateInstallProgressStep(window *adw.ApplicationWindow, chosenLang, chosen
 	buttonBox.SetMarginTop(20)
 	outerBox.Append(buttonBox)
 
-	cancelBtn := gtk.NewButtonWithLabel(lib.T("Cancel"))
-	cancelBtn.SetSizeRequest(120, 40)
+	cancelBtn := gtk.NewButtonWithLabel(lib.T_("Cancel"))
+	cancelBtn.SetSizeRequest(150, 45)
 	buttonBox.Append(cancelBtn)
 
 	parent := castToGtkWindow(window)
@@ -87,11 +87,11 @@ func CreateInstallProgressStep(window *adw.ApplicationWindow, chosenLang, chosen
 			gtk.MessageQuestion,
 			gtk.ButtonsNone,
 		)
-		dialog.SetTitle(lib.T("Installation"))
-		dialog.Object.SetObjectProperty("secondary-text", lib.T("Are you sure you want to cancel the installation ?"))
+		dialog.SetTitle(lib.T_("Installation"))
+		dialog.Object.SetObjectProperty("secondary-text", lib.T_("Are you sure you want to cancel the installation ?"))
 
-		dialog.AddButton(lib.T("No"), int(gtk.ResponseCancel))
-		dialog.AddButton(lib.T("Yes"), int(gtk.ResponseOK))
+		dialog.AddButton(lib.T_("No"), int(gtk.ResponseCancel))
+		dialog.AddButton(lib.T_("Yes"), int(gtk.ResponseOK))
 
 		dialog.ConnectResponse(func(responseID int) {
 			if responseID == int(gtk.ResponseOK) {
@@ -133,7 +133,7 @@ func watchStatus(service *install.InstallerService, cancelBtn *gtk.Button) {
 			glib.IdleAdd(func() {
 				statusLabel.SetLabel(fmt.Sprintf("<big><b>%s</b></big>", currentStatus))
 				if service.Status.GetStatus() == install.StatusCompleted {
-					cancelBtn.SetLabel(lib.T("Restart"))
+					cancelBtn.SetLabel(lib.T_("Restart"))
 					cancelBtn.AddCSSClass("blue-button")
 					cancelBtn.ConnectClicked(func() {
 						go func() {

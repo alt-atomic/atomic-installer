@@ -28,7 +28,6 @@ import (
 func CreateSummaryStep(
 	chosenLang, chosenImage, chosenDisk, chosenFilesystem, chosenBootMode, chosenUsername, chosenPassword string,
 	onInstall func(),
-	onCancel func(),
 ) gtk.Widgetter {
 	outerBox := gtk.NewBox(gtk.OrientationVertical, 12)
 	outerBox.SetMarginTop(20)
@@ -75,35 +74,25 @@ func CreateSummaryStep(
 	}
 
 	stars := strings.Repeat("*", len(chosenPassword))
-	addRow(lib.T("User"), chosenUsername)
-	addRow(lib.T("Password"), stars)
-	addRow(lib.T("Bootloader"), chosenBootMode)
-	addRow(lib.T("Selected image"), chosenImage)
-	addRow(lib.T("System language"), chosenLang)
-	addRow(lib.T("Selected disk"), chosenDisk)
-	addRow(lib.T("Filesystem"), chosenFilesystem)
+	addRow(lib.T_("User"), chosenUsername)
+	addRow(lib.T_("Password"), stars)
+	addRow(lib.T_("Bootloader"), chosenBootMode)
+	addRow(lib.T_("Selected image"), chosenImage)
+	addRow(lib.T_("System language"), chosenLang)
+	addRow(lib.T_("Selected disk"), chosenDisk)
+	addRow(lib.T_("Filesystem"), chosenFilesystem)
 
 	buttonBox := gtk.NewBox(gtk.OrientationHorizontal, 20)
 	buttonBox.SetHAlign(gtk.AlignCenter)
 	buttonBox.SetMarginTop(20)
 
-	cancelBtn := gtk.NewButtonWithLabel(lib.T("Back"))
-	installBtn := gtk.NewButtonWithLabel(lib.T("Start install"))
+	installBtn := gtk.NewButtonWithLabel(lib.T_("Start install"))
 
-	cancelBtn.SetSizeRequest(120, 40)
-	installBtn.SetSizeRequest(160, 40)
+	installBtn.SetSizeRequest(150, 45)
 	installBtn.AddCSSClass("suggested-action")
 
-	buttonBox.Append(cancelBtn)
 	buttonBox.Append(installBtn)
 	outerBox.Append(buttonBox)
-
-	// Обработчики
-	cancelBtn.ConnectClicked(func() {
-		if onCancel != nil {
-			onCancel()
-		}
-	})
 
 	installBtn.ConnectClicked(func() {
 		if onInstall != nil {

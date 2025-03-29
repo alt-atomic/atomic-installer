@@ -77,29 +77,29 @@ func (s *SafeStatus) GetStatusText() string {
 	defer s.mu.Unlock()
 	switch s.status {
 	case StatusCreatedCommit:
-		return lib.T("Creating ostree repository")
+		return lib.T_("Creating ostree repository")
 	case StatusDownloadImage:
-		return lib.T(fmt.Sprintf("Downloading image: %s", s.progress))
+		return lib.T_(fmt.Sprintf("Downloading image: %s", s.progress))
 	case StatusNotStarted:
-		return lib.T("Starting installation")
+		return lib.T_("Starting installation")
 	case StatusCheckingEnvironment:
-		return lib.T("Checking required commands and environment")
+		return lib.T_("Checking required commands and environment")
 	case StatusRemountingTmp:
-		return lib.T("Checking temporary directory")
+		return lib.T_("Checking temporary directory")
 	case StatusPreparingDisk:
-		return lib.T("Preparing disk: cleaning, partitioning")
+		return lib.T_("Preparing disk: cleaning, partitioning")
 	case StatusInstallingSystem:
-		return lib.T("Installing system")
+		return lib.T_("Installing system")
 	case StatusConfiguringSystem:
-		return lib.T("Configuring system")
+		return lib.T_("Configuring system")
 	case StatusFinalizingInstallation:
-		return lib.T("Finalizing installation, verification and cleanup")
+		return lib.T_("Finalizing installation, verification and cleanup")
 	case StatusCompleted:
-		return lib.T("Installation completed successfully")
+		return lib.T_("Installation completed successfully")
 	case StatusError:
-		return lib.T("Installation error")
+		return lib.T_("Installation error")
 	default:
-		return lib.T("Unknown status")
+		return lib.T_("Unknown status")
 	}
 }
 

@@ -58,22 +58,22 @@ func addDefaultImage(images []Choice) []Choice {
 		Choice{
 			Name:        "ghcr.io/alt-gnome/alt-atomic:latest",
 			ShortText:   "GNOME",
-			Description: lib.T("GNOME Image. Recommended"),
+			Description: lib.T_("GNOME Image. Recommended"),
 		},
 		Choice{
 			Name:        "ghcr.io/alt-gnome/alt-atomic:latest-nv",
 			ShortText:   "GNOME NVIDIA",
-			Description: lib.T("GNOME image for NVIDIA. OPEN driver"),
+			Description: lib.T_("GNOME image for NVIDIA. OPEN driver"),
 		},
 		Choice{
 			Name:        "ghcr.io/alt-atomic/alt-kde:latest",
 			ShortText:   "KDE",
-			Description: lib.T("KDE image. In testing phase, not recommended"),
+			Description: lib.T_("KDE image. In testing phase, not recommended"),
 		},
 		Choice{
 			Name:        "ghcr.io/alt-atomic/alt-kde:latest-nv",
 			ShortText:   "KDE NVIDIA",
-			Description: lib.T("KDE image for NVIDIA. In testing, not recommended"),
+			Description: lib.T_("KDE image for NVIDIA. In testing, not recommended"),
 		},
 	)
 	return images
@@ -91,13 +91,13 @@ func validateImage(image string) (string, error) {
 		if errors.As(err, &exitErr) {
 			return stderr.String(), err
 		}
-		return lib.T("Error executing command (check that skopeo is installed)"), err
+		return lib.T_("Error executing command (check that skopeo is installed)"), err
 	}
 	return string(output), nil
 }
 
 // CreateImageStep – виджет для шага выбора образа.
-func CreateImageStep(onImageSelected func(string), onCancel func()) gtk.Widgetter {
+func CreateImageStep(onImageSelected func(string)) gtk.Widgetter {
 	// ВЕРТИКАЛЬНЫЙ box – «корневой»
 	outerBox := gtk.NewBox(gtk.OrientationVertical, 12)
 	outerBox.SetMarginStart(20)
@@ -116,9 +116,8 @@ func CreateImageStep(onImageSelected func(string), onCancel func()) gtk.Widgette
 	wrapper.Append(pic)
 	outerBox.Append(wrapper)
 
-	// Создадим центральный контейнер (centerBox), который займёт всё свободное пространство
 	centerBox := gtk.NewBox(gtk.OrientationVertical, 12)
-	centerBox.SetVExpand(true) // чтобы растягиваться по вертикали
+	centerBox.SetVExpand(true)
 	centerBox.SetHAlign(gtk.AlignCenter)
 	centerBox.SetVAlign(gtk.AlignCenter)
 	outerBox.Append(centerBox)
@@ -128,7 +127,7 @@ func CreateImageStep(onImageSelected func(string), onCancel func()) gtk.Widgette
 
 	// Добавляем пункт «кастомный» (последним)
 	images = append(images, Choice{
-		Name:        lib.T("Add your image"),
+		Name:        lib.T_("Add your image"),
 		Description: "",
 	})
 
@@ -156,12 +155,12 @@ func CreateImageStep(onImageSelected func(string), onCancel func()) gtk.Widgette
 
 	// Поле для ввода кастомного образа (по умолчанию скрыто)
 	customEntry := gtk.NewEntry()
-	customEntry.SetPlaceholderText(lib.T("Enter the image link"))
+	customEntry.SetPlaceholderText(lib.T_("Enter the image link"))
 	customEntry.SetVisible(false)
 	centerBox.Append(customEntry)
 
 	// Кнопка "Проверить и добавить" + Спиннер
-	checkButton := gtk.NewButtonWithLabel(lib.T("Check and add"))
+	checkButton := gtk.NewButtonWithLabel(lib.T_("Check and add"))
 	checkButton.SetVisible(false)
 
 	spinner := gtk.NewSpinner()
@@ -185,14 +184,10 @@ func CreateImageStep(onImageSelected func(string), onCancel func()) gtk.Widgette
 	buttonBox.SetHAlign(gtk.AlignCenter)
 	buttonBox.SetMarginTop(20)
 
-	cancelBtn := gtk.NewButtonWithLabel(lib.T("Back"))
-	chooseBtn := gtk.NewButtonWithLabel(lib.T("Select"))
-
-	cancelBtn.SetSizeRequest(120, 40)
-	chooseBtn.SetSizeRequest(120, 40)
+	chooseBtn := gtk.NewButtonWithLabel(lib.T_("Continue"))
+	chooseBtn.SetSizeRequest(150, 45)
 	chooseBtn.AddCSSClass("suggested-action")
 
-	buttonBox.Append(cancelBtn)
 	buttonBox.Append(chooseBtn)
 
 	outerBox.Append(buttonBox)
@@ -216,7 +211,7 @@ func CreateImageStep(onImageSelected func(string), onCancel func()) gtk.Widgette
 			customEntry.SetVisible(true)
 			checkButton.SetVisible(true)
 			stack.SetVisibleChildName("button")
-			descLabel.SetLabel(lib.T("Enter your image manually and check"))
+			descLabel.SetLabel(lib.T_("Enter your image manually and check"))
 		} else {
 			// Стандартный пункт
 			customEntry.SetVisible(false)
@@ -225,7 +220,7 @@ func CreateImageStep(onImageSelected func(string), onCancel func()) gtk.Widgette
 
 			desc := images[activeIndex].Description
 			if desc == "" {
-				desc = lib.T("Empty description")
+				desc = lib.T_("Empty description")
 			}
 			descLabel.SetLabel(desc)
 		}
@@ -235,7 +230,7 @@ func CreateImageStep(onImageSelected func(string), onCancel func()) gtk.Widgette
 	checkButton.ConnectClicked(func() {
 		imageName := strings.TrimSpace(customEntry.Text())
 		if imageName == "" {
-			checkResultLabel.SetLabel(lib.T("Please enter a valid image name"))
+			checkResultLabel.SetLabel(lib.T_("Please enter a valid image name"))
 			checkResultLabel.SetVisible(true)
 			return
 		}
@@ -245,7 +240,6 @@ func CreateImageStep(onImageSelected func(string), onCancel func()) gtk.Widgette
 		spinner.Start()
 
 		checkButton.SetSensitive(false)
-		cancelBtn.SetSensitive(false)
 		chooseBtn.SetSensitive(false)
 
 		// Запускаем проверку в горутине
@@ -260,16 +254,17 @@ func CreateImageStep(onImageSelected func(string), onCancel func()) gtk.Widgette
 				spinner.Stop()
 				stack.SetVisibleChildName("button")
 				checkButton.SetSensitive(true)
-				cancelBtn.SetSensitive(true)
 				chooseBtn.SetSensitive(true)
 
 				if err != nil {
-					checkResultLabel.SetLabel(fmt.Sprintf("%s :\n %s", lib.T("Image verification error"), out))
+					checkResultLabel.SetLabel(fmt.Sprintf("%s :\n %s", lib.T_("Image verification error"), out))
 					checkResultLabel.SetVisible(true)
+					checkResultLabel.AddCSSClass("error")
 					customImageValid = ""
 				} else {
-					checkResultLabel.SetLabel(lib.T("The image has been verified and added to the list"))
+					checkResultLabel.SetLabel(lib.T_("The image has been verified and added to the list"))
 					checkResultLabel.SetVisible(true)
+					checkResultLabel.RemoveCSSClass("error")
 					customImageValid = imageName
 
 					images = append(images, Choice{
@@ -286,11 +281,6 @@ func CreateImageStep(onImageSelected func(string), onCancel func()) gtk.Widgette
 		}(imageName)
 	})
 
-	// Нажали «Выйти»
-	cancelBtn.ConnectClicked(func() {
-		onCancel()
-	})
-
 	// Нажали «Выбрать»
 	chooseBtn.ConnectClicked(func() {
 		activeIndex := combo.Active()
@@ -301,7 +291,7 @@ func CreateImageStep(onImageSelected func(string), onCancel func()) gtk.Widgette
 		var resultImage string
 		if activeIndex == customChoiceIndex {
 			if customImageValid == "" {
-				checkResultLabel.SetLabel(lib.T("First check the entered image"))
+				checkResultLabel.SetLabel(lib.T_("First check the entered image"))
 				checkResultLabel.SetVisible(true)
 				return
 			}
@@ -319,7 +309,7 @@ func CreateImageStep(onImageSelected func(string), onCancel func()) gtk.Widgette
 	if combo.Active() == 0 {
 		desc := images[0].Description
 		if desc == "" {
-			descLabel.SetLabel(lib.T("Empty description"))
+			descLabel.SetLabel(lib.T_("Empty description"))
 		} else {
 			descLabel.SetLabel(desc)
 		}

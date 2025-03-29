@@ -18,7 +18,6 @@ package steps
 
 import (
 	"fmt"
-	"github.com/diamondburned/gotk4-adwaita/pkg/adw"
 	"github.com/diamondburned/gotk4/pkg/gtk/v4"
 	"golang.org/x/text/language"
 	"installer/app/image"
@@ -30,7 +29,7 @@ import (
 var chosenLangIndex int = -1
 
 // CreateLanguageStep – шаг выбора языка.
-func CreateLanguageStep(window *adw.ApplicationWindow, updateStep func(), onLanguageSelected func(string), onCancel func()) gtk.Widgetter {
+func CreateLanguageStep(updateStep func(), onLanguageSelected func(string)) gtk.Widgetter {
 	box := gtk.NewBox(gtk.OrientationVertical, 12)
 	box.SetMarginTop(20)
 	box.SetMarginBottom(20)
@@ -85,19 +84,12 @@ func CreateLanguageStep(window *adw.ApplicationWindow, updateStep func(), onLang
 	buttonBox.SetHAlign(gtk.AlignCenter)
 	buttonBox.SetMarginTop(20)
 
-	backBtn := gtk.NewButtonWithLabel(lib.T("Exit"))
-	chooseBtn := gtk.NewButtonWithLabel(lib.T("Select"))
-
-	backBtn.SetSizeRequest(120, 40)
-	chooseBtn.SetSizeRequest(120, 40)
-
+	chooseBtn := gtk.NewButtonWithLabel(lib.T_("Continue"))
+	chooseBtn.SetSizeRequest(150, 45)
 	chooseBtn.AddCSSClass("suggested-action")
 
-	buttonBox.Append(backBtn)
 	buttonBox.Append(chooseBtn)
 	box.Append(buttonBox)
-
-	parent := castToGtkWindow(window)
 
 	combo.ConnectChanged(func() {
 		activeIdx := combo.Active()
@@ -118,31 +110,6 @@ func CreateLanguageStep(window *adw.ApplicationWindow, updateStep func(), onLang
 		}
 		lib.SetLanguage(langCode)
 		updateStep()
-	})
-
-	backBtn.ConnectClicked(func() {
-		dialog := gtk.NewMessageDialog(
-			parent,
-			gtk.DialogModal,
-			gtk.MessageQuestion,
-			gtk.ButtonsNone,
-		)
-		dialog.SetTitle(lib.T("Installation"))
-		dialog.Object.SetObjectProperty("secondary-text", lib.T("Do you really want to exit ?"))
-
-		dialog.AddButton(lib.T("No"), int(gtk.ResponseCancel))
-		dialog.AddButton(lib.T("Yes"), int(gtk.ResponseOK))
-
-		dialog.ConnectResponse(func(responseID int) {
-			if responseID == int(gtk.ResponseOK) {
-				if onCancel != nil {
-					onCancel()
-				}
-			}
-			dialog.Destroy()
-		})
-
-		dialog.Show()
 	})
 
 	chooseBtn.ConnectClicked(func() {

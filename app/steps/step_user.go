@@ -26,7 +26,7 @@ import (
 )
 
 // CreateUserStep – GUI-шаг для создания пользователя.
-func CreateUserStep(onUserCreated func(string, string), onCancel func()) gtk.Widgetter {
+func CreateUserStep(onUserCreated func(string, string)) gtk.Widgetter {
 	outerBox := gtk.NewBox(gtk.OrientationVertical, 12)
 	outerBox.SetMarginTop(20)
 	outerBox.SetMarginBottom(20)
@@ -48,7 +48,7 @@ func CreateUserStep(onUserCreated func(string, string), onCancel func()) gtk.Wid
 	contentBox.SetVExpand(true) // Чтобы занять всё пространство
 	outerBox.Append(contentBox)
 
-	usernameLabel := gtk.NewLabel(fmt.Sprintf("%s:", lib.T("Login")))
+	usernameLabel := gtk.NewLabel(fmt.Sprintf("%s:", lib.T_("Login")))
 	usernameLabel.SetHAlign(gtk.AlignStart)
 	contentBox.Append(usernameLabel)
 
@@ -57,7 +57,7 @@ func CreateUserStep(onUserCreated func(string, string), onCancel func()) gtk.Wid
 	usernameEntry.SetSizeRequest(250, -1)
 	contentBox.Append(usernameEntry)
 
-	passwordLabel := gtk.NewLabel(fmt.Sprintf("%s:", lib.T("Password")))
+	passwordLabel := gtk.NewLabel(fmt.Sprintf("%s:", lib.T_("Password")))
 	passwordLabel.SetHAlign(gtk.AlignStart)
 	contentBox.Append(passwordLabel)
 
@@ -68,7 +68,7 @@ func CreateUserStep(onUserCreated func(string, string), onCancel func()) gtk.Wid
 	passwordEntry.SetSizeRequest(250, -1)
 	contentBox.Append(passwordEntry)
 
-	repeatLabel := gtk.NewLabel(fmt.Sprintf("%s:", lib.T("Repeat password")))
+	repeatLabel := gtk.NewLabel(fmt.Sprintf("%s:", lib.T_("Repeat password")))
 	repeatLabel.SetHAlign(gtk.AlignStart)
 	contentBox.Append(repeatLabel)
 
@@ -83,30 +83,20 @@ func CreateUserStep(onUserCreated func(string, string), onCancel func()) gtk.Wid
 	errorLabel := gtk.NewLabel("")
 	errorLabel.SetHAlign(gtk.AlignStart)
 	errorLabel.SetMarginTop(8)
+	errorLabel.AddCSSClass("error")
 	contentBox.Append(errorLabel)
 
 	buttonBox := gtk.NewBox(gtk.OrientationHorizontal, 20)
 	buttonBox.SetHAlign(gtk.AlignCenter)
 	buttonBox.SetMarginTop(20)
 
-	cancelBtn := gtk.NewButtonWithLabel(lib.T("Back"))
-	chooseBtn := gtk.NewButtonWithLabel(lib.T("Select"))
-
-	cancelBtn.SetSizeRequest(120, 40)
-	chooseBtn.SetSizeRequest(120, 40)
+	chooseBtn := gtk.NewButtonWithLabel(lib.T_("Continue"))
+	chooseBtn.SetSizeRequest(150, 45)
 	chooseBtn.AddCSSClass("suggested-action")
 
-	buttonBox.Append(cancelBtn)
 	buttonBox.Append(chooseBtn)
 
 	outerBox.Append(buttonBox)
-
-	// Обработчик "Отмена"
-	cancelBtn.ConnectClicked(func() {
-		if onCancel != nil {
-			onCancel()
-		}
-	})
 
 	// В обработчике кнопки "Выбрать"
 	chooseBtn.ConnectClicked(func() {
@@ -116,31 +106,31 @@ func CreateUserStep(onUserCreated func(string, string), onCancel func()) gtk.Wid
 
 		// Проверка, что поля не пустые.
 		if userName == "" || pass == "" {
-			errorLabel.SetLabel(lib.T("Login and password cannot be empty"))
+			errorLabel.SetLabel(lib.T_("Login and password cannot be empty"))
 			return
 		}
 
 		// Проверка, что логин и пароль содержат только латинские символы и цифры.
 		latinRegex := regexp.MustCompile(`^[A-Za-z0-9]+$`)
 		if !latinRegex.MatchString(userName) {
-			errorLabel.SetLabel(lib.T("The login must contain only Latin letters and numbers"))
+			errorLabel.SetLabel(lib.T_("The login must contain only Latin letters and numbers"))
 			return
 		}
 
 		if pass != passRepeat {
-			errorLabel.SetLabel(lib.T("Passwords do not match. Try again"))
+			errorLabel.SetLabel(lib.T_("Passwords do not match. Try again"))
 			return
 		}
 
 		// Проверка, что логин не состоит только из цифр.
 		isDigits, err := regexp.MatchString(`^\d+$`, userName)
 		if err != nil {
-			errorLabel.SetLabel(lib.T("Login verification error"))
+			errorLabel.SetLabel(lib.T_("Login verification error"))
 			return
 		}
 
 		if isDigits {
-			errorLabel.SetLabel(lib.T("Login cannot consist only of numbers"))
+			errorLabel.SetLabel(lib.T_("Login cannot consist only of numbers"))
 			return
 		}
 

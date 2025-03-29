@@ -36,14 +36,15 @@ func NewInstallerViewService() *InstallerViewService {
 
 func (i *InstallerViewService) getStepTitles() []string {
 	return []string{
-		fmt.Sprintf("1. %s", lib.T("Language selection")),
-		fmt.Sprintf("2. %s", lib.T("Image selection")),
-		fmt.Sprintf("3. %s", lib.T("Disk selection")),
-		fmt.Sprintf("4. %s", lib.T("Filesystem selection")),
-		fmt.Sprintf("5. %s", lib.T("Bootloader selection")),
-		fmt.Sprintf("6. %s", lib.T("User selection")),
-		fmt.Sprintf("7. %s", lib.T("Summary")),
-		fmt.Sprintf("8. %s", lib.T("Installation")),
+		fmt.Sprintf("1. %s", lib.T_("Language selection")),
+		fmt.Sprintf("2. %s", lib.T_("Device check")),
+		fmt.Sprintf("2. %s", lib.T_("Image selection")),
+		fmt.Sprintf("3. %s", lib.T_("Disk selection")),
+		fmt.Sprintf("4. %s", lib.T_("Filesystem selection")),
+		fmt.Sprintf("5. %s", lib.T_("Bootloader selection")),
+		fmt.Sprintf("6. %s", lib.T_("User selection")),
+		fmt.Sprintf("7. %s", lib.T_("Summary")),
+		fmt.Sprintf("8. %s", lib.T_("Installation")),
 	}
 }
 
@@ -51,7 +52,7 @@ func (i *InstallerViewService) getStepTitles() []string {
 func (i *InstallerViewService) OnActivate(app *adw.Application) {
 	window := i.NewAdwApplicationWindow(app)
 	window.SetDefaultSize(900, 700)
-	window.SetTitle(lib.T("Installation"))
+	window.SetTitle(lib.T_("Installation"))
 	var currentStep int
 
 	stepsCount := len(i.getStepTitles())
@@ -79,12 +80,14 @@ func (i *InstallerViewService) OnActivate(app *adw.Application) {
 
 	backBtn := gtk.NewButton()
 	backIcon := gtk.NewImageFromIconName("go-previous-symbolic")
+	backIcon.SetPixelSize(22)
 	backBtn.SetChild(backIcon)
 	backBtn.AddCSSClass("circular")
 	backBtn.AddCSSClass("flat")
 
 	nextBtn := gtk.NewButton()
 	nextIcon := gtk.NewImageFromIconName("go-next-symbolic")
+	nextIcon.SetPixelSize(22)
 	nextBtn.SetChild(nextIcon)
 	nextBtn.AddCSSClass("circular")
 	nextBtn.AddCSSClass("flat")
@@ -140,21 +143,20 @@ func (i *InstallerViewService) OnActivate(app *adw.Application) {
 		if currentStep == stepsCount-1 {
 			backBtn.SetSensitive(false)
 			nextBtn.SetSensitive(false)
-			nextBtn.SetTooltipText(lib.T("Waiting for installation to complete"))
-			nextBtn.SetTooltipText(lib.T("Ready"))
+			nextBtn.SetTooltipText(lib.T_("Waiting for installation to complete"))
+			nextBtn.SetTooltipText(lib.T_("Ready"))
 		} else {
 			backBtn.SetSensitive(currentStep > 0)
 			nextBtn.SetSensitive(stepDone[currentStep])
-			nextBtn.SetTooltipText(lib.T("Next"))
+			nextBtn.SetTooltipText(lib.T_("Next"))
 		}
 	}
 
 	// Заполняем stepsArr
 	stepsArr = []func() gtk.Widgetter{
-		// Шаг 1: Выбор языка
+		// Шаг 0: Выбор языка
 		func() gtk.Widgetter {
 			return steps.CreateLanguageStep(
-				window,
 				func() {
 					updateStep()
 				},
@@ -165,8 +167,17 @@ func (i *InstallerViewService) OnActivate(app *adw.Application) {
 					currentStep++
 					updateStep()
 				},
+			)
+		},
+		// Шаг 1: Проверка устройства
+		func() gtk.Widgetter {
+			return steps.CreateCheckDeviceStep(
 				func() {
-					os.Exit(0)
+					updateStep()
+					stepDone[1] = true
+					nextBtn.SetSensitive(true)
+					currentStep++
+					updateStep()
 				},
 			)
 		},
@@ -175,16 +186,10 @@ func (i *InstallerViewService) OnActivate(app *adw.Application) {
 			return steps.CreateImageStep(
 				func(selected string) {
 					chosenImage = selected
-					stepDone[1] = true
+					stepDone[2] = true
 					nextBtn.SetSensitive(true)
 					currentStep++
 					updateStep()
-				},
-				func() {
-					if currentStep > 0 {
-						currentStep--
-						updateStep()
-					}
 				},
 			)
 		},
@@ -193,16 +198,10 @@ func (i *InstallerViewService) OnActivate(app *adw.Application) {
 			return steps.CreateDiskStep(
 				func(disk string) {
 					chosenDisk = disk
-					stepDone[2] = true
+					stepDone[3] = true
 					nextBtn.SetSensitive(true)
 					currentStep++
 					updateStep()
-				},
-				func() {
-					if currentStep > 0 {
-						currentStep--
-						updateStep()
-					}
 				},
 			)
 		},
@@ -211,16 +210,10 @@ func (i *InstallerViewService) OnActivate(app *adw.Application) {
 			return steps.CreateFilesystemStep(
 				func(fs string) {
 					chosenFilesystem = fs
-					stepDone[3] = true
+					stepDone[4] = true
 					nextBtn.SetSensitive(true)
 					currentStep++
 					updateStep()
-				},
-				func() {
-					if currentStep > 0 {
-						currentStep--
-						updateStep()
-					}
 				},
 			)
 		},
@@ -229,16 +222,10 @@ func (i *InstallerViewService) OnActivate(app *adw.Application) {
 			return steps.CreateBootLoaderStep(
 				func(bootMode string) {
 					chosenBootMode = bootMode
-					stepDone[4] = true
+					stepDone[5] = true
 					nextBtn.SetSensitive(true)
 					currentStep++
 					updateStep()
-				},
-				func() {
-					if currentStep > 0 {
-						currentStep--
-						updateStep()
-					}
 				},
 			)
 		},
@@ -248,16 +235,10 @@ func (i *InstallerViewService) OnActivate(app *adw.Application) {
 				func(username, password string) {
 					chosenUsername = username
 					chosenPassword = password
-					stepDone[5] = true
+					stepDone[6] = true
 					nextBtn.SetSensitive(true)
 					currentStep++
 					updateStep()
-				},
-				func() {
-					if currentStep > 0 {
-						currentStep--
-						updateStep()
-					}
 				},
 			)
 		},
@@ -272,16 +253,10 @@ func (i *InstallerViewService) OnActivate(app *adw.Application) {
 				chosenUsername,
 				chosenPassword,
 				func() {
-					stepDone[6] = true
+					stepDone[7] = true
 					nextBtn.SetSensitive(true)
 					currentStep++
 					updateStep()
-				},
-				func() {
-					if currentStep > 0 {
-						currentStep--
-						updateStep()
-					}
 				},
 			)
 		},

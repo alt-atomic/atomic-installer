@@ -49,6 +49,9 @@ var iconUser []byte
 //go:embed icons/layers.png
 var iconResult []byte
 
+//go:embed icons/install.png
+var iconInstall []byte
+
 //go:embed icons/animation.gif
 var animGIF []byte
 
@@ -60,12 +63,15 @@ const (
 	IconBoot
 	IconUser
 	IconResult
+	IconInstall
 )
 
 // NewIconFromEmbed возвращает готовый к вставке в UI виджет
 func NewIconFromEmbed(iconType int) gtk.Widgetter {
 	var icon []byte
 	switch iconType {
+	case IconInstall:
+		icon = iconInstall
 	case IconLanguage:
 		icon = iconLanguage
 	case IconImage:

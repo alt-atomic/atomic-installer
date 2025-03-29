@@ -26,7 +26,7 @@ import (
 )
 
 // CreateBootLoaderStep – GUI-шаг выбора загрузчика (UEFI или LEGACY).
-func CreateBootLoaderStep(onBootModeSelected func(string), onCancel func()) gtk.Widgetter {
+func CreateBootLoaderStep(onBootModeSelected func(string)) gtk.Widgetter {
 	outerBox := gtk.NewBox(gtk.OrientationVertical, 12)
 	outerBox.SetMarginTop(20)
 	outerBox.SetMarginBottom(20)
@@ -56,12 +56,12 @@ func CreateBootLoaderStep(onBootModeSelected func(string), onCancel func()) gtk.
 	var choices []string
 	if uefiSupported {
 		choices = []string{
-			lib.T("UEFI (recommended for modern systems)"),
-			lib.T("LEGACY (compatible variant)"),
+			lib.T_("UEFI (recommended for modern systems)"),
+			lib.T_("LEGACY (compatible variant)"),
 		}
 	} else {
 		choices = []string{
-			lib.T("LEGACY (UEFI not supported)"),
+			lib.T_("LEGACY (UEFI not supported)"),
 		}
 	}
 
@@ -80,9 +80,9 @@ func CreateBootLoaderStep(onBootModeSelected func(string), onCancel func()) gtk.
 
 	// Начальный текст
 	if uefiSupported {
-		infoLabel.SetLabel(lib.T("Your computer supports UEFI boot - this is the recommended choice"))
+		infoLabel.SetLabel(lib.T_("Your computer supports UEFI boot - this is the recommended choice"))
 	} else {
-		infoLabel.SetLabel(lib.T("UEFI is not supported on this system, use LEGACY"))
+		infoLabel.SetLabel(lib.T_("UEFI is not supported on this system, use LEGACY"))
 	}
 
 	// При смене выбора (если нужно динамически менять подсказку)
@@ -92,9 +92,9 @@ func CreateBootLoaderStep(onBootModeSelected func(string), onCancel func()) gtk.
 			return
 		}
 		if idx == 0 {
-			infoLabel.SetLabel(lib.T("UEFI mode is selected - this is the recommended choice for modern systems"))
+			infoLabel.SetLabel(lib.T_("UEFI mode is selected - this is the recommended choice for modern systems"))
 		} else {
-			infoLabel.SetLabel(lib.T("LEGACY is selected - a more compatible option for BIOS/UEFI"))
+			infoLabel.SetLabel(lib.T_("LEGACY is selected - a more compatible option for BIOS/UEFI"))
 		}
 	})
 
@@ -103,32 +103,19 @@ func CreateBootLoaderStep(onBootModeSelected func(string), onCancel func()) gtk.
 	buttonBox.SetHAlign(gtk.AlignCenter)
 	buttonBox.SetMarginTop(20)
 
-	cancelBtn := gtk.NewButtonWithLabel(lib.T("Back"))
-	chooseBtn := gtk.NewButtonWithLabel(lib.T("Select"))
-
-	cancelBtn.SetSizeRequest(120, 40)
-	chooseBtn.SetSizeRequest(120, 40)
+	chooseBtn := gtk.NewButtonWithLabel(lib.T_("Continue"))
+	chooseBtn.SetSizeRequest(150, 45)
 	chooseBtn.AddCSSClass("suggested-action")
 
-	buttonBox.Append(cancelBtn)
 	buttonBox.Append(chooseBtn)
 	outerBox.Append(buttonBox)
 
-	// Обработка "Назад"
-	cancelBtn.ConnectClicked(func() {
-		if onCancel != nil {
-			onCancel()
-		}
-	})
-
-	// «Выбрать»
 	chooseBtn.ConnectClicked(func() {
 		active := combo.Active()
 		if active < 0 {
 			return
 		}
 		chosenStr := choices[active]
-		// Обрезаем "UEFI " или "LEGACY "
 		if idx := strings.Index(chosenStr, " "); idx != -1 {
 			chosenStr = chosenStr[:idx]
 		}
