@@ -49,7 +49,7 @@ var iconUser []byte
 //go:embed icons/layers.png
 var iconResult []byte
 
-//go:embed icons/install.png
+//go:embed icons/analysis.png
 var iconInstall []byte
 
 //go:embed icons/animation.gif
