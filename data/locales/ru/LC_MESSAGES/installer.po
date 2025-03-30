@@ -275,3 +275,27 @@ msgstr "Ошибка получения списка дисков"
 
 msgid "Insufficient disk space. At least 60GB required"
 msgstr "Недостаточно места на диске. Требуется не менее 60 ГБ"
+
+msgid "Sorry, this username is already in use. Please try another one."
+msgstr "Извините, это имя пользователя уже занято. Попробуйте другое."
+
+msgid "The username is too long."
+msgstr "Имя пользователя слишком длинное."
+
+msgid "The username must start with a lowercase letter from a to z."
+msgstr "Имя пользователя должно начинаться с маленькой буквы от a до z."
+
+msgid "Sorry, this username is not available. Please try another one."
+msgstr "Извините, это имя пользователя недоступно. Попробуйте другое."
+
+msgid "The username may only consist of lowercase letters (a-z), digits, and the characters '-' or '_'."
+msgstr "Имя пользователя может состоять только из маленьких букв от a до z, цифр и символов '-' или '_'."
+
+msgid "This username will be used for creating your home directory and cannot be changed."
+msgstr "Это имя будет использоваться для создания домашней папки и не может быть изменено."
+
+msgid "Passwords do not match. Try again."
+msgstr "Пароли не совпадают. Попробуйте ещё раз."
+
+msgid "Username and password cannot be empty."
+msgstr "Имя пользователя и пароль не могут быть пустым."

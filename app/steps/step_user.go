@@ -18,11 +18,10 @@ package steps
 
 import (
 	"fmt"
-	"installer/app/image"
-	"installer/lib"
-	"regexp"
-
 	"github.com/diamondburned/gotk4/pkg/gtk/v4"
+	"installer/app/image"
+	"installer/app/utility"
+	"installer/lib"
 )
 
 // CreateUserStep – GUI-шаг для создания пользователя.
@@ -104,33 +103,19 @@ func CreateUserStep(onUserCreated func(string, string)) gtk.Widgetter {
 		pass := passwordEntry.Text()
 		passRepeat := repeatEntry.Text()
 
-		// Проверка, что поля не пустые.
 		if userName == "" || pass == "" {
-			errorLabel.SetLabel(lib.T_("Login and password cannot be empty"))
+			errorLabel.SetLabel(lib.T_("Username and password cannot be empty."))
 			return
 		}
 
-		// Проверка, что логин и пароль содержат только латинские символы и цифры.
-		latinRegex := regexp.MustCompile(`^[A-Za-z0-9]+$`)
-		if !latinRegex.MatchString(userName) {
-			errorLabel.SetLabel(lib.T_("The login must contain only Latin letters and numbers"))
+		valid, tip := utility.IsValidUsername(userName, false)
+		if !valid {
+			errorLabel.SetLabel(tip)
 			return
 		}
 
 		if pass != passRepeat {
-			errorLabel.SetLabel(lib.T_("Passwords do not match. Try again"))
-			return
-		}
-
-		// Проверка, что логин не состоит только из цифр.
-		isDigits, err := regexp.MatchString(`^\d+$`, userName)
-		if err != nil {
-			errorLabel.SetLabel(lib.T_("Login verification error"))
-			return
-		}
-
-		if isDigits {
-			errorLabel.SetLabel(lib.T_("Login cannot consist only of numbers"))
+			errorLabel.SetLabel(lib.T_("Passwords do not match. Try again."))
 			return
 		}
 
