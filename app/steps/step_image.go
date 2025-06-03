@@ -56,13 +56,13 @@ func addDefaultImage(images []Choice) []Choice {
 	images = append(
 		images,
 		Choice{
-			Name:        "ghcr.io/alt-gnome/alt-atomic:latest",
-			ShortText:   "GNOME",
+			Name:        "altlinux.space/alt-atomic/onyx:stable",
+			ShortText:   "Onyx",
 			Description: lib.T_("GNOME Image. Recommended"),
 		},
 		Choice{
-			Name:        "ghcr.io/alt-gnome/alt-atomic:latest-nv",
-			ShortText:   "GNOME NVIDIA",
+			Name:        "altlinux.space/alt-atomic/onyx:stable-nv",
+			ShortText:   "Onyx with NVIDIA",
 			Description: lib.T_("GNOME image for NVIDIA. OPEN driver"),
 		},
 		Choice{
