@@ -18,15 +18,15 @@ package steps
 
 import (
 	"fmt"
-	"github.com/diamondburned/gotk4-adwaita/pkg/adw"
-	"github.com/diamondburned/gotk4/pkg/glib/v2"
-	"github.com/diamondburned/gotk4/pkg/gtk/v4"
-	"installer/app/image"
 	"installer/app/install"
 	"installer/lib"
 	"os/exec"
 	"regexp"
 	"strings"
+
+	"github.com/diamondburned/gotk4-adwaita/pkg/adw"
+	"github.com/diamondburned/gotk4/pkg/glib/v2"
+	"github.com/diamondburned/gotk4/pkg/gtk/v4"
 )
 
 var statusLabel *gtk.Label
@@ -40,10 +40,15 @@ func CreateInstallProgressStep(window *adw.ApplicationWindow, chosenLang, chosen
 	outerBox.SetMarginStart(20)
 	outerBox.SetMarginEnd(20)
 
-	animWidget := image.NewAnimatedGifWidget()
+	animWidget := gtk.NewSpinner()
+	animWidget.SetSizeRequest(64, 64)
+	animWidget.SetHAlign(gtk.AlignCenter)
+	animWidget.SetVAlign(gtk.AlignCenter)
+	animWidget.SetHExpand(true)
+	animWidget.Start()
 	wrapper := gtk.NewBox(gtk.OrientationHorizontal, 0)
 	wrapper.SetSizeRequest(150, 150)
-	wrapper.SetHExpand(false)
+	wrapper.SetHExpand(true)
 	wrapper.SetVExpand(false)
 	wrapper.Append(animWidget)
 	outerBox.Append(wrapper)

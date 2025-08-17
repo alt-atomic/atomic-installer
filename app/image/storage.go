@@ -18,10 +18,7 @@ package image
 
 import (
 	_ "embed" // Включаем поддержку go:embed
-	"github.com/diamondburned/gotk4/pkg/gdkpixbuf/v2"
-	"installer/lib"
 	"log"
-	"time"
 
 	"github.com/diamondburned/gotk4/pkg/gdk/v4"
 	"github.com/diamondburned/gotk4/pkg/glib/v2"
@@ -51,9 +48,6 @@ var iconResult []byte
 
 //go:embed icons/analysis.png
 var iconInstall []byte
-
-//go:embed icons/animation.gif
-var animGIF []byte
 
 const (
 	IconLanguage = iota
@@ -99,80 +93,4 @@ func NewIconFromEmbed(iconType int) gtk.Widgetter {
 
 	pic := gtk.NewPictureForPaintable(texture)
 	return pic
-}
-
-// NewAnimatedGifWidget возвращает виджет *gtk.Image с анимированным GIF.
-func NewAnimatedGifWidget() gtk.Widgetter {
-	loader := gdkpixbuf.NewPixbufLoader()
-	if err := loader.Write(animGIF); err != nil {
-		log.Println("Error writing GIF to PixbufLoader:", err)
-		return gtk.NewLabel("Failed to load animated GIF.")
-	}
-	loader.Close()
-
-	anim := loader.Animation()
-	if anim == nil {
-		return gtk.NewLabel("Failed to interpret GIF as animation.")
-	}
-
-	iter := anim.Iter(nil)
-	if iter == nil {
-		return gtk.NewLabel("Failed to get animation iterator.")
-	}
-
-	// Take the first frame
-	firstPixbuf := iter.Pixbuf()
-	if firstPixbuf == nil {
-		return gtk.NewLabel("Failed to get the first frame of GIF.")
-	}
-
-	img := gtk.NewImageFromPixbuf(firstPixbuf)
-	img.SetSizeRequest(150, 150)
-	img.SetHExpand(true)
-	img.SetVExpand(true)
-	img.SetHAlign(gtk.AlignCenter)
-	img.SetVAlign(gtk.AlignCenter)
-	go animateGIF(anim, img)
-
-	return img
-}
-
-// animateGIF – в фоне крутит кадры анимированного GIF и обновляет картинку.
-func animateGIF(anim *gdkpixbuf.PixbufAnimation, img *gtk.Image) {
-	// У каждого потока/циклической анимации должен быть свой итератор
-	iter := anim.Iter(nil)
-	if iter == nil {
-		lib.Log.Error("Error: Failed to get animation iterator")
-		return
-	}
-
-	for {
-		delay := iter.DelayTime()
-		if delay < 1 {
-			delay = 100
-		}
-
-		time.Sleep(time.Duration(delay) * time.Millisecond)
-		ok := iter.Advance(nil)
-		if !ok {
-			iter = anim.Iter(nil)
-			if iter == nil {
-				return
-			}
-		}
-		pix := iter.Pixbuf()
-		if pix == nil {
-			continue
-		}
-
-		glib.IdleAdd(func() {
-			// Масштабируем каждый кадр:
-			scaled := pix.ScaleSimple(150, 150, gdkpixbuf.InterpBilinear)
-			if scaled != nil {
-				img.SetFromPixbuf(scaled)
-			} else {
-				img.SetFromPixbuf(pix)
-			}
-		})
-	}
 }
