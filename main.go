@@ -76,6 +76,7 @@ func checkCommands() error {
 		"umount",
 		"blkid",
 		"lsblk",
+		"cryptsetup",
 	}
 	for _, cmd := range commands {
 		if _, err = exec.LookPath(cmd); err != nil {

@@ -70,7 +70,7 @@ func CreateFilesystemStep(onFsSelected func(string)) gtk.Widgetter {
 	centerBox.Append(noteLabel)
 
 	// Изначально для btrfs
-	noteLabel.SetLabel(lib.T_("btrfs – recommended choice, works well with atomic image"))
+	noteLabel.SetLabel(lib.T_("btrfs - recommended choice, works well with atomic image"))
 
 	// Меняем описание при смене выбора
 	combo.ConnectChanged(func() {
@@ -80,9 +80,9 @@ func CreateFilesystemStep(onFsSelected func(string)) gtk.Widgetter {
 			return
 		}
 		if activeIndex == 0 {
-			noteLabel.SetLabel(lib.T_("btrfs – recommended choice, works well with atomic image"))
+			noteLabel.SetLabel(lib.T_("btrfs - recommended choice, works well with atomic image"))
 		} else {
-			noteLabel.SetLabel(lib.T_("ext4 – classic, proven file system"))
+			noteLabel.SetLabel(lib.T_("ext4 - classic, proven file system"))
 		}
 	})
 

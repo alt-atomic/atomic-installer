@@ -53,11 +53,13 @@ type User struct {
 }
 
 type InstallerData struct {
-	Image          string
-	Disk           string
-	TypeFilesystem string
-	TypeBoot       string
-	User           User
+	Image              string
+	Disk               string
+	TypeFilesystem     string
+	TypeBoot           string
+	IsCryptoFilesystem bool
+	LuksPassword       string
+	User               User
 }
 
 const containerDir = "/var/lib/containers"
@@ -86,7 +88,7 @@ func (i *InstallerService) RunInstall() {
 		return
 	}
 
-	partitions, err := i.getNamedPartitions()
+	partitions, err := i.getNamedPartitionsWithCrypto()
 	if err != nil {
 		i.Status.SetStatus(StatusError)
 		lib.Log.Errorf("Error obtaining named partitions: %v", err)
@@ -164,13 +166,38 @@ func (i *InstallerService) cleanupTemporaryPartition(ctx context.Context, partit
 		return fmt.Errorf("ошибка удаления временного раздела: %v", err)
 	}
 
-	// Расширяем root-раздел
-	lib.Log.Infof("Расширение root-раздела %s до 100%%...", partitions["root"].Path)
+	// Определяем физический раздел для resize (исходный или зашифрованный)
+	var resizeTarget string
+	if i.data.IsCryptoFilesystem && partitions["root"].OriginalPath != "" {
+		resizeTarget = partitions["root"].OriginalPath
+		lib.Log.Infof("Расширение LUKS раздела %s до 100%%...", resizeTarget)
+	} else {
+		resizeTarget = partitions["root"].Path
+		lib.Log.Infof("Расширение root-раздела %s до 100%%...", resizeTarget)
+	}
+
 	cmd = exec.Command("parted", "-s", i.data.Disk, "resizepart", partitions["root"].Number, "100%")
 	cmd.Stdout = os.Stdout
 	cmd.Stderr = os.Stderr
 	if err := cmd.Run(); err != nil {
-		return fmt.Errorf("ошибка изменения размера root-раздела: %v", err)
+		return fmt.Errorf("ошибка изменения размера раздела: %v", err)
+	}
+
+	// Для LUKS разделов нужно расширить и сам зашифрованный том
+	if i.data.IsCryptoFilesystem && partitions["root"].OriginalPath != "" {
+		lib.Log.Infof("Расширение LUKS тома...")
+		resizeCmd := exec.Command("cryptsetup", "resize", "cryptroot")
+		resizeCmd.Stdout = os.Stdout
+		resizeCmd.Stderr = os.Stderr
+		resizeCmd.Stdin = strings.NewReader(i.data.LuksPassword)
+		if err := resizeCmd.Run(); err != nil {
+			return fmt.Errorf("ошибка расширения LUKS тома: %v", err)
+		}
+
+		// Задержка и принудительное обновление размера устройства
+		time.Sleep(3 * time.Second)
+		exec.Command("udevadm", "settle").Run()
+		exec.Command("partprobe").Run()
 	}
 
 	// Проверяем тип файловой системы root-раздела
@@ -325,6 +352,37 @@ func (i *InstallerService) prepareDisk(ctx context.Context) error {
 	}
 	lib.Log.Infof("Partitions: %s", strings.Join(partitionList, ", "))
 
+	// LUKS шифрование root раздела
+	if i.data.IsCryptoFilesystem {
+		lib.Log.Infof("Настройка LUKS шифрования для раздела %s...", partitions["root"].Path)
+
+		originalRootPath := partitions["root"].Path
+
+		// Форматируем с LUKS2, передаем пароль через stdin
+		cryptsetupCmd := exec.CommandContext(ctx, "cryptsetup", "luksFormat", "--type", "luks2", "--batch-mode", "--force-password", originalRootPath)
+		cryptsetupCmd.Stdout = os.Stdout
+		cryptsetupCmd.Stderr = os.Stderr
+		cryptsetupCmd.Stdin = strings.NewReader(i.data.LuksPassword)
+		if err := cryptsetupCmd.Run(); err != nil {
+			return fmt.Errorf("ошибка создания LUKS раздела: %v", err)
+		}
+
+		// Открываем зашифрованный раздел
+		openCmd := exec.CommandContext(ctx, "cryptsetup", "luksOpen", originalRootPath, "cryptroot")
+		openCmd.Stdout = os.Stdout
+		openCmd.Stderr = os.Stderr
+		openCmd.Stdin = strings.NewReader(i.data.LuksPassword)
+		if err := openCmd.Run(); err != nil {
+			return fmt.Errorf("ошибка открытия LUKS раздела: %v", err)
+		}
+
+		// Создаем новую map с обновленными путями
+		rootInfo := partitions["root"]
+		rootInfo.OriginalPath = originalRootPath
+		rootInfo.Path = "/dev/mapper/cryptroot"
+		partitions["root"] = rootInfo
+	}
+
 	formats := []struct {
 		cmd  string
 		args []string
@@ -426,10 +484,9 @@ func (i *InstallerService) installToFilesystem(ctx context.Context) error {
 	mountBtrfsHome := "/mnt/btrfs/home"
 	mountPointBoot := "/mnt/target/boot"
 	efiMountPoint := "/mnt/target/boot/efi"
-	var installCmd string
 
-	// Получаем именованные разделы
-	partitions, err := i.getNamedPartitions()
+	// Получаем именованные разделы (с учетом LUKS если активен)
+	partitions, err := i.getNamedPartitionsWithCrypto()
 	if err != nil {
 		return fmt.Errorf("ошибка получения разделов: %v", err)
 	}
@@ -454,17 +511,7 @@ func (i *InstallerService) installToFilesystem(ctx context.Context) error {
 	}
 
 	// Выполняем установку с использованием bootc
-	if i.data.TypeBoot == "UEFI" {
-		installCmd = fmt.Sprintf(
-			"[ -f /usr/libexec/init-ostree.sh ] && /usr/libexec/init-ostree.sh; bootc install to-filesystem --skip-fetch-check --disable-selinux %s",
-			"/mnt/target",
-		)
-	} else {
-		installCmd = fmt.Sprintf(
-			"[ -f /usr/libexec/init-ostree.sh ] && /usr/libexec/init-ostree.sh; bootc install to-filesystem --skip-fetch-check --generic-image --disable-selinux %s",
-			"/mnt/target",
-		)
-	}
+	installCmd := i.buildBootcCommand(partitions)
 
 	cmd := exec.CommandContext(ctx, "podman", "run", "--rm", "--privileged", "--pid=host",
 		"--security-opt", "label=type:unconfined_t",
@@ -591,6 +638,10 @@ func (i *InstallerService) installToFilesystem(ctx context.Context) error {
 			return fmt.Errorf("ошибка установки timezone: %v", err)
 		}
 
+		if err = i.configureHostname(ostreeDeployPath, "atomic"); err != nil {
+			return fmt.Errorf("ошибка установки timezone: %v", err)
+		}
+
 		// Копируем содержимое /var в подтом @var
 		if err = i.copyWithRsync(fmt.Sprintf("%s/var/", ostreeDeployPath), mountBtrfsVar); err != nil {
 			return fmt.Errorf("ошибка копирования /var в @var: %v", err)
@@ -679,6 +730,65 @@ func (i *InstallerService) installToFilesystem(ctx context.Context) error {
 	}
 	time.Sleep(5 * time.Second)
 	i.unmountDisk(mountPoint)
+	return nil
+}
+
+// buildBootcCommand создает команду bootc с флагами для LUKS
+func (i *InstallerService) buildBootcCommand(partitions map[string]PartitionInfo) string {
+	baseCmd := []string{"[ -f /usr/libexec/init-ostree.sh ] && /usr/libexec/init-ostree.sh; bootc install to-filesystem --skip-fetch-check --disable-selinux"}
+
+	if i.data.TypeBoot != "UEFI" {
+		baseCmd = append(baseCmd, "--generic-image")
+	}
+
+	if i.data.IsCryptoFilesystem {
+		// UUID boot раздела
+		bootUUID := i.getUUID(partitions["boot"].Path)
+		baseCmd = append(baseCmd, fmt.Sprintf("--boot-mount-spec=UUID=%s", bootUUID))
+
+		// Путь к зашифрованному разделу
+		baseCmd = append(baseCmd, "--root-mount-spec=/dev/mapper/cryptroot")
+
+		// UUID исходного раздела для LUKS
+		originalPath := partitions["root"].OriginalPath
+		if originalPath == "" {
+			originalPath = partitions["root"].Path
+		}
+		rootUUID := i.getUUID(originalPath)
+		baseCmd = append(baseCmd, fmt.Sprintf("--karg=rd.luks.name=%s=cryptroot", rootUUID))
+
+		// Дополнительные флаги для btrfs
+		if i.data.TypeFilesystem == "btrfs" {
+			baseCmd = append(baseCmd, "--karg=rootflags=subvol=@")
+		}
+	}
+
+	// Добавляем параметры для красивого экрана загрузки и Plymouth
+	baseCmd = append(baseCmd, "--karg=rhgb")
+	baseCmd = append(baseCmd, "--karg=quiet")
+	baseCmd = append(baseCmd, "--karg=splash")
+	baseCmd = append(baseCmd, "--karg=plymouth.enable=1")
+	baseCmd = append(baseCmd, "--karg=rd.plymouth=1")
+
+	baseCmd = append(baseCmd, "/mnt/target")
+	return strings.Join(baseCmd, " ")
+}
+
+// configureHostname задаёт имя хоста через chroot
+func (i *InstallerService) configureHostname(rootPath, hostname string) error {
+	chrootCmd := func(args ...string) *exec.Cmd {
+		cmd := exec.Command("chroot", append([]string{rootPath}, args...)...)
+		cmd.Stdout = os.Stdout
+		cmd.Stderr = os.Stderr
+		return cmd
+	}
+
+	cmd := chrootCmd("hostnamectl", "set-hostname", hostname)
+	if err := cmd.Run(); err != nil {
+		return fmt.Errorf("ошибка установки hostname %s: %v", hostname, err)
+	}
+
+	lib.Log.Infof("Имя хоста %s успешно настроено.", hostname)
 	return nil
 }
 
@@ -817,7 +927,7 @@ func (i *InstallerService) generateFstab(mountPoint string, partitions map[strin
 
 	lib.Log.Infof("Генерация %s...", fstabPath)
 
-	fstabContent := "# Auto generate fstab from atomic-actions installer"
+	fstabContent := "# Auto generate fstab from atomic-installer installer\n"
 
 	if rootFileSystem == "btrfs" {
 		fstabContent += fmt.Sprintf(
@@ -856,18 +966,53 @@ func (i *InstallerService) generateFstab(mountPoint string, partitions map[strin
 	}
 	defer file.Close()
 
-	_, err = file.WriteString(fstabContent)
-	if err != nil {
+	if _, err = file.WriteString(fstabContent); err != nil {
 		return fmt.Errorf("ошибка записи в %s: %v", fstabPath, err)
 	}
 
 	lib.Log.Infof("Файл %s успешно создан.", fstabPath)
+
+	// Создание crypttab для LUKS разделов
+	if i.data.IsCryptoFilesystem {
+		if err := i.generateCrypttab(ostreeDeployPath, partitions); err != nil {
+			return fmt.Errorf("ошибка создания crypttab: %v", err)
+		}
+	}
+
+	return nil
+}
+
+func (i *InstallerService) generateCrypttab(ostreeDeployPath string, partitions map[string]PartitionInfo) error {
+	crypttabPath := fmt.Sprintf("%s/etc/crypttab", ostreeDeployPath)
+	lib.Log.Infof("Генерация %s...", crypttabPath)
+
+	var originalPath string
+	if partitions["root"].OriginalPath != "" {
+		originalPath = partitions["root"].OriginalPath
+	} else {
+		originalPath = partitions["root"].Path
+	}
+
+	crypttabContent := fmt.Sprintf("cryptroot UUID=%s none luks\n", i.getUUID(originalPath))
+
+	file, err := os.Create(crypttabPath)
+	if err != nil {
+		return fmt.Errorf("ошибка создания %s: %v", crypttabPath, err)
+	}
+	defer file.Close()
+
+	if _, err = file.WriteString(crypttabContent); err != nil {
+		return fmt.Errorf("ошибка записи в %s: %v", crypttabPath, err)
+	}
+
+	lib.Log.Infof("Файл %s успешно создан. Содержимое: %s", crypttabPath, crypttabContent)
 	return nil
 }
 
 type PartitionInfo struct {
-	Path   string
-	Number string
+	Path         string
+	Number       string
+	OriginalPath string
 }
 
 func (i *InstallerService) getNamedPartitions() (map[string]PartitionInfo, error) {
@@ -900,6 +1045,24 @@ func (i *InstallerService) getNamedPartitions() (map[string]PartitionInfo, error
 		namedPartitions["boot"] = PartitionInfo{Path: partitions[1], Number: "2"} // Boot Partition
 		namedPartitions["root"] = PartitionInfo{Path: partitions[2], Number: "3"} // Root Partition
 		namedPartitions["temp"] = PartitionInfo{Path: partitions[3], Number: "4"} // Temporary Partition
+	}
+
+	return namedPartitions, nil
+}
+
+// getNamedPartitionsWithCrypto возвращает разделы с учетом LUKS шифрования
+func (i *InstallerService) getNamedPartitionsWithCrypto() (map[string]PartitionInfo, error) {
+	namedPartitions, err := i.getNamedPartitions()
+	if err != nil {
+		return nil, err
+	}
+
+	// Если используется LUKS, обновляем путь root раздела
+	if i.data.IsCryptoFilesystem {
+		rootInfo := namedPartitions["root"]
+		rootInfo.OriginalPath = rootInfo.Path
+		rootInfo.Path = "/dev/mapper/cryptroot"
+		namedPartitions["root"] = rootInfo
 	}
 
 	return namedPartitions, nil

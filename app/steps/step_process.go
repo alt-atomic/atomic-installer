@@ -33,7 +33,7 @@ var statusLabel *gtk.Label
 var logView *gtk.TextView
 
 // CreateInstallProgressStep – шаг, запускающий и показывающий процесс установки.
-func CreateInstallProgressStep(window *adw.ApplicationWindow, chosenLang, chosenImage, chosenDisk, chosenFilesystem, chosenBootMode, chosenUsername, chosenPassword string, onCancel func()) gtk.Widgetter {
+func CreateInstallProgressStep(window *adw.ApplicationWindow, chosenLang, chosenImage, chosenDisk, chosenFilesystem, chosenBootMode, chosenUsername, chosenPassword string, chosenCrypto bool, chosenLuksPassword string, onCancel func()) gtk.Widgetter {
 	outerBox := gtk.NewBox(gtk.OrientationVertical, 12)
 	outerBox.SetMarginTop(20)
 	outerBox.SetMarginBottom(20)
@@ -115,11 +115,13 @@ func CreateInstallProgressStep(window *adw.ApplicationWindow, chosenLang, chosen
 	}
 
 	installData := install.InstallerData{
-		Image:          chosenImage,
-		Disk:           chosenDisk,
-		TypeFilesystem: chosenFilesystem,
-		TypeBoot:       chosenBootMode,
-		User:           user,
+		Image:              chosenImage,
+		Disk:               chosenDisk,
+		TypeFilesystem:     chosenFilesystem,
+		TypeBoot:           chosenBootMode,
+		IsCryptoFilesystem: chosenCrypto,
+		LuksPassword:       chosenLuksPassword,
+		User:               user,
 	}
 
 	installService := install.NewInstallerService(installData)

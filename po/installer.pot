@@ -1,0 +1,349 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the apm package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: apm\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2025-08-20 03:32+0600\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"Language: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+
+#: app/gui.go:39
+msgid "Language selection"
+msgstr ""
+
+#: app/gui.go:40
+msgid "Device check"
+msgstr ""
+
+#: app/gui.go:41
+msgid "Image selection"
+msgstr ""
+
+#: app/gui.go:42
+msgid "Disk selection"
+msgstr ""
+
+#: app/gui.go:43
+msgid "Filesystem selection"
+msgstr ""
+
+#: app/gui.go:44
+msgid "Bootloader selection"
+msgstr ""
+
+#: app/gui.go:45
+msgid "User selection"
+msgstr ""
+
+#: app/gui.go:46
+msgid "Summary"
+msgstr ""
+
+#: app/gui.go:47 app/gui.go:55 app/steps/step_process.go:95
+msgid "Installation"
+msgstr ""
+
+#: app/gui.go:148
+msgid "Waiting for installation to complete"
+msgstr ""
+
+#: app/gui.go:149
+msgid "Ready"
+msgstr ""
+
+#: app/gui.go:153
+msgid "Next"
+msgstr ""
+
+#: app/install/status.go:80
+msgid "Creating ostree repository"
+msgstr ""
+
+#: app/install/status.go:84
+msgid "Starting installation"
+msgstr ""
+
+#: app/install/status.go:86
+msgid "Checking required commands and environment"
+msgstr ""
+
+#: app/install/status.go:88
+msgid "Checking temporary directory"
+msgstr ""
+
+#: app/install/status.go:90
+msgid "Preparing disk: cleaning, partitioning"
+msgstr ""
+
+#: app/install/status.go:92
+msgid "Installing system"
+msgstr ""
+
+#: app/install/status.go:94
+msgid "Configuring system"
+msgstr ""
+
+#: app/install/status.go:96
+msgid "Finalizing installation, verification and cleanup"
+msgstr ""
+
+#: app/install/status.go:98
+msgid "Installation completed successfully"
+msgstr ""
+
+#: app/install/status.go:100
+msgid "Installation error"
+msgstr ""
+
+#: app/install/status.go:102
+msgid "Unknown status"
+msgstr ""
+
+#: app/steps/step_boot.go:59
+msgid "UEFI (recommended for modern systems)"
+msgstr ""
+
+#: app/steps/step_boot.go:60
+msgid "LEGACY (compatible variant)"
+msgstr ""
+
+#: app/steps/step_boot.go:64
+msgid "LEGACY (UEFI not supported)"
+msgstr ""
+
+#: app/steps/step_boot.go:83
+msgid "Your computer supports UEFI boot - this is the recommended choice"
+msgstr ""
+
+#: app/steps/step_boot.go:85
+msgid "UEFI is not supported on this system, use LEGACY"
+msgstr ""
+
+#: app/steps/step_boot.go:95
+msgid ""
+"UEFI mode is selected - this is the recommended choice for modern systems"
+msgstr ""
+
+#: app/steps/step_boot.go:97
+msgid "LEGACY is selected - a more compatible option for BIOS/UEFI"
+msgstr ""
+
+#: app/steps/step_boot.go:106 app/steps/step_check.go:70
+#: app/steps/step_disk.go:132 app/steps/step_filesystem.go:94
+#: app/steps/step_image.go:177 app/steps/step_language.go:87
+#: app/steps/step_user.go:92
+msgid "Continue"
+msgstr ""
+
+#: app/steps/step_check.go:58 app/steps/step_check.go:60
+msgid "Checking device..."
+msgstr ""
+
+#: app/steps/step_check.go:87
+msgid "Insufficient disk space. At least 60GB required"
+msgstr ""
+
+#: app/steps/step_check.go:106
+msgid "The device is ready for installation!"
+msgstr ""
+
+#: app/steps/step_check.go:112
+msgid "Check your internet connection"
+msgstr ""
+
+#: app/steps/step_check.go:142
+msgid "Error getting disk list"
+msgstr ""
+
+#: app/steps/step_disk.go:81
+msgid "Disk size"
+msgstr ""
+
+#. По умолчанию включено
+#: app/steps/step_disk.go:94
+msgid "Encrypt disk with LUKS"
+msgstr ""
+
+#: app/steps/step_disk.go:106
+msgid "LUKS password:"
+msgstr ""
+
+#: app/steps/step_disk.go:111
+msgid "Minimum 4 characters"
+msgstr ""
+
+#: app/steps/step_disk.go:199
+msgid "unknown model"
+msgstr ""
+
+#. Изначально для btrfs
+#: app/steps/step_filesystem.go:73 app/steps/step_filesystem.go:83
+msgid "btrfs - recommended choice, works well with atomic image"
+msgstr ""
+
+#: app/steps/step_filesystem.go:85
+msgid "ext4 - classic, proven file system"
+msgstr ""
+
+#: app/steps/step_image.go:61
+msgid "GNOME Image. Recommended"
+msgstr ""
+
+#: app/steps/step_image.go:66
+msgid "GNOME image for NVIDIA"
+msgstr ""
+
+#: app/steps/step_image.go:84
+msgid "Error executing command (check that skopeo is installed)"
+msgstr ""
+
+#: app/steps/step_image.go:120
+msgid "Add your image"
+msgstr ""
+
+#: app/steps/step_image.go:148
+msgid "Enter the image link"
+msgstr ""
+
+#. Кнопка "Проверить и добавить" + Спиннер
+#: app/steps/step_image.go:153
+msgid "Check and add"
+msgstr ""
+
+#: app/steps/step_image.go:204
+msgid "Enter your image manually and check"
+msgstr ""
+
+#: app/steps/step_image.go:213 app/steps/step_image.go:302
+msgid "Empty description"
+msgstr ""
+
+#: app/steps/step_image.go:223
+msgid "Please enter a valid image name"
+msgstr ""
+
+#: app/steps/step_image.go:250
+msgid "Image verification error"
+msgstr ""
+
+#: app/steps/step_image.go:255
+msgid "The image has been verified and added to the list"
+msgstr ""
+
+#: app/steps/step_image.go:284
+msgid "First check the entered image"
+msgstr ""
+
+#: app/steps/step_process.go:58
+msgid "Start installation"
+msgstr ""
+
+#: app/steps/step_process.go:81
+msgid "Cancel"
+msgstr ""
+
+#: app/steps/step_process.go:96
+msgid "Are you sure you want to cancel the installation ?"
+msgstr ""
+
+#: app/steps/step_process.go:98 app/steps/step_result.go:86
+msgid "No"
+msgstr ""
+
+#: app/steps/step_process.go:99 app/steps/step_result.go:88
+msgid "Yes"
+msgstr ""
+
+#: app/steps/step_process.go:143
+msgid "Restart"
+msgstr ""
+
+#: app/steps/step_result.go:78
+msgid "User"
+msgstr ""
+
+#: app/steps/step_result.go:79 app/steps/step_user.go:59
+msgid "Password"
+msgstr ""
+
+#: app/steps/step_result.go:80
+msgid "Bootloader"
+msgstr ""
+
+#: app/steps/step_result.go:81
+msgid "Selected image"
+msgstr ""
+
+#: app/steps/step_result.go:82
+msgid "System language"
+msgstr ""
+
+#: app/steps/step_result.go:83
+msgid "Selected disk"
+msgstr ""
+
+#: app/steps/step_result.go:84
+msgid "Filesystem"
+msgstr ""
+
+#: app/steps/step_result.go:90
+msgid "Disk encryption"
+msgstr ""
+
+#: app/steps/step_result.go:96
+msgid "Start install"
+msgstr ""
+
+#: app/steps/step_user.go:50
+msgid "Login"
+msgstr ""
+
+#: app/steps/step_user.go:70
+msgid "Repeat password"
+msgstr ""
+
+#: app/steps/step_user.go:107
+msgid "Username and password cannot be empty."
+msgstr ""
+
+#: app/steps/step_user.go:118
+msgid "Passwords do not match. Try again."
+msgstr ""
+
+#: app/utility/user.go:53
+msgid "Sorry, this username is already in use. Please try another one."
+msgstr ""
+
+#: app/utility/user.go:55
+msgid "The username is too long."
+msgstr ""
+
+#: app/utility/user.go:57
+msgid "The username must start with a lowercase letter from a to z."
+msgstr ""
+
+#: app/utility/user.go:59
+msgid "Sorry, this username is not available. Please try another one."
+msgstr ""
+
+#: app/utility/user.go:61
+msgid ""
+"The username may only consist of lowercase letters (a-z), digits, and the "
+"characters '-' or '_'."
+msgstr ""
+
+#: app/utility/user.go:64
+msgid ""
+"This username will be used for creating your home directory and cannot be "
+"changed."
+msgstr ""

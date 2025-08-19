@@ -63,17 +63,7 @@ func addDefaultImage(images []Choice) []Choice {
 		Choice{
 			Name:        "altlinux.space/alt-atomic/onyx:stable-nv",
 			ShortText:   "Onyx with NVIDIA",
-			Description: lib.T_("GNOME image for NVIDIA. OPEN driver"),
-		},
-		Choice{
-			Name:        "ghcr.io/alt-atomic/alt-kde:latest",
-			ShortText:   "KDE",
-			Description: lib.T_("KDE image. In testing phase, not recommended"),
-		},
-		Choice{
-			Name:        "ghcr.io/alt-atomic/alt-kde:latest-nv",
-			ShortText:   "KDE NVIDIA",
-			Description: lib.T_("KDE image for NVIDIA. In testing, not recommended"),
+			Description: lib.T_("GNOME image for NVIDIA"),
 		},
 	)
 	return images

@@ -1,0 +1,343 @@
+msgid ""
+msgstr ""
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2025-08-20 03:32+0600\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+
+#: app/gui.go:39
+msgid "Language selection"
+msgstr "Выбор языка"
+
+#: app/gui.go:40
+msgid "Device check"
+msgstr "Проверка устройства"
+
+#: app/gui.go:41
+msgid "Image selection"
+msgstr "Выбор образа"
+
+#: app/gui.go:42
+msgid "Disk selection"
+msgstr "Выбор диска"
+
+#: app/gui.go:43
+msgid "Filesystem selection"
+msgstr "Выбор файловой системы"
+
+#: app/gui.go:44
+msgid "Bootloader selection"
+msgstr "Выбор загрузчика"
+
+#: app/gui.go:45
+msgid "User selection"
+msgstr "Создание пользователя"
+
+#: app/gui.go:46
+msgid "Summary"
+msgstr "Сводка"
+
+#: app/gui.go:47 app/gui.go:55 app/steps/step_process.go:95
+msgid "Installation"
+msgstr "Установка"
+
+#: app/gui.go:148
+msgid "Waiting for installation to complete"
+msgstr "Ожидание завершения установки"
+
+#: app/gui.go:149
+msgid "Ready"
+msgstr "Готово"
+
+#: app/gui.go:153
+msgid "Next"
+msgstr "Далее"
+
+#: app/install/status.go:80
+msgid "Creating ostree repository"
+msgstr "Создание ostree-репозитория"
+
+#: app/install/status.go:84
+msgid "Starting installation"
+msgstr "Запуск установки"
+
+#: app/install/status.go:86
+msgid "Checking required commands and environment"
+msgstr "Проверка необходимых команд и окружения"
+
+#: app/install/status.go:88
+msgid "Checking temporary directory"
+msgstr "Проверка временной директории"
+
+#: app/install/status.go:90
+msgid "Preparing disk: cleaning, partitioning"
+msgstr "Подготовка диска: очистка, разметка"
+
+#: app/install/status.go:92
+msgid "Installing system"
+msgstr "Установка системы"
+
+#: app/install/status.go:94
+msgid "Configuring system"
+msgstr "Настройка системы"
+
+#: app/install/status.go:96
+msgid "Finalizing installation, verification and cleanup"
+msgstr "Завершение установки, проверка и очистка"
+
+#: app/install/status.go:98
+msgid "Installation completed successfully"
+msgstr "Установка успешно завершена"
+
+#: app/install/status.go:100
+msgid "Installation error"
+msgstr "Ошибка установки"
+
+#: app/install/status.go:102
+msgid "Unknown status"
+msgstr "Неизвестный статус"
+
+#: app/steps/step_boot.go:59
+msgid "UEFI (recommended for modern systems)"
+msgstr "UEFI (рекомендуется для современных систем)"
+
+#: app/steps/step_boot.go:60
+msgid "LEGACY (compatible variant)"
+msgstr "LEGACY (совместимый вариант)"
+
+#: app/steps/step_boot.go:64
+msgid "LEGACY (UEFI not supported)"
+msgstr "LEGACY (UEFI не поддерживается)"
+
+#: app/steps/step_boot.go:83
+msgid "Your computer supports UEFI boot - this is the recommended choice"
+msgstr "Ваш компьютер поддерживает загрузку UEFI - это рекомендуемый выбор"
+
+#: app/steps/step_boot.go:85
+msgid "UEFI is not supported on this system, use LEGACY"
+msgstr "UEFI не поддерживается на этой системе, используйте LEGACY"
+
+#: app/steps/step_boot.go:95
+msgid ""
+"UEFI mode is selected - this is the recommended choice for modern systems"
+msgstr "Выбран режим UEFI - это рекомендуемый выбор для современных систем"
+
+#: app/steps/step_boot.go:97
+msgid "LEGACY is selected - a more compatible option for BIOS/UEFI"
+msgstr "Выбран LEGACY - более совместимый вариант для BIOS/UEFI"
+
+#: app/steps/step_boot.go:106 app/steps/step_check.go:70
+#: app/steps/step_disk.go:132 app/steps/step_filesystem.go:94
+#: app/steps/step_image.go:177 app/steps/step_language.go:87
+#: app/steps/step_user.go:92
+msgid "Continue"
+msgstr "Продолжить"
+
+#: app/steps/step_check.go:58 app/steps/step_check.go:60
+msgid "Checking device..."
+msgstr "Проверка устройства..."
+
+#: app/steps/step_check.go:87
+msgid "Insufficient disk space. At least 60GB required"
+msgstr "Недостаточно места на диске. Требуется не менее 60 ГБ"
+
+#: app/steps/step_check.go:106
+msgid "The device is ready for installation!"
+msgstr "Устройство готово к установке!"
+
+#: app/steps/step_check.go:112
+msgid "Check your internet connection"
+msgstr "Проверьте подключение к интернету"
+
+#: app/steps/step_check.go:142
+msgid "Error getting disk list"
+msgstr "Ошибка получения списка дисков"
+
+#: app/steps/step_disk.go:81
+msgid "Disk size"
+msgstr "Размер диска"
+
+#. По умолчанию включено
+#: app/steps/step_disk.go:94
+msgid "Encrypt disk with LUKS"
+msgstr "Зашифровать диск с помощью LUKS"
+
+#: app/steps/step_disk.go:106
+msgid "LUKS password:"
+msgstr "Пароль LUKS:"
+
+#: app/steps/step_disk.go:111
+msgid "Minimum 4 characters"
+msgstr "Минимум 4 символа"
+
+#: app/steps/step_disk.go:199
+msgid "unknown model"
+msgstr "неизвестная модель"
+
+#. Изначально для btrfs
+#: app/steps/step_filesystem.go:73 app/steps/step_filesystem.go:83
+msgid "btrfs - recommended choice, works well with atomic image"
+msgstr "btrfs - рекомендуемый выбор, хорошо работает с атомарным образом"
+
+#: app/steps/step_filesystem.go:85
+msgid "ext4 - classic, proven file system"
+msgstr "ext4 - классическая, проверенная файловая система"
+
+#: app/steps/step_image.go:61
+msgid "GNOME Image. Recommended"
+msgstr "Образ GNOME. Рекомендуется"
+
+#: app/steps/step_image.go:66
+msgid "GNOME image for NVIDIA"
+msgstr "Образ GNOME для NVIDIA"
+
+#: app/steps/step_image.go:84
+msgid "Error executing command (check that skopeo is installed)"
+msgstr "Ошибка выполнения команды (проверьте, установлен ли skopeo)"
+
+#: app/steps/step_image.go:120
+msgid "Add your image"
+msgstr "Добавить свой образ"
+
+#: app/steps/step_image.go:148
+msgid "Enter the image link"
+msgstr "Введите ссылку на образ"
+
+#. Кнопка "Проверить и добавить" + Спиннер
+#: app/steps/step_image.go:153
+msgid "Check and add"
+msgstr "Проверить и добавить"
+
+#: app/steps/step_image.go:204
+msgid "Enter your image manually and check"
+msgstr "Введите образ вручную и проверьте"
+
+#: app/steps/step_image.go:213 app/steps/step_image.go:302
+msgid "Empty description"
+msgstr "Пустое описание"
+
+#: app/steps/step_image.go:223
+msgid "Please enter a valid image name"
+msgstr "Пожалуйста, введите корректное имя образа"
+
+#: app/steps/step_image.go:250
+msgid "Image verification error"
+msgstr "Ошибка проверки образа"
+
+#: app/steps/step_image.go:255
+msgid "The image has been verified and added to the list"
+msgstr "Образ проверен и добавлен в список"
+
+#: app/steps/step_image.go:284
+msgid "First check the entered image"
+msgstr "Сначала проверьте введенный образ"
+
+#: app/steps/step_process.go:58
+msgid "Start installation"
+msgstr "Начать установку"
+
+#: app/steps/step_process.go:81
+msgid "Cancel"
+msgstr "Отмена"
+
+#: app/steps/step_process.go:96
+msgid "Are you sure you want to cancel the installation ?"
+msgstr "Вы уверены, что хотите отменить установку?"
+
+#: app/steps/step_process.go:98 app/steps/step_result.go:86
+msgid "No"
+msgstr "Нет"
+
+#: app/steps/step_process.go:99 app/steps/step_result.go:88
+msgid "Yes"
+msgstr "Да"
+
+#: app/steps/step_process.go:143
+msgid "Restart"
+msgstr "Перезагрузка"
+
+#: app/steps/step_result.go:78
+msgid "User"
+msgstr "Пользователь"
+
+#: app/steps/step_result.go:79 app/steps/step_user.go:59
+msgid "Password"
+msgstr "Пароль"
+
+#: app/steps/step_result.go:80
+msgid "Bootloader"
+msgstr "Загрузчик"
+
+#: app/steps/step_result.go:81
+msgid "Selected image"
+msgstr "Выбранный образ"
+
+#: app/steps/step_result.go:82
+msgid "System language"
+msgstr "Язык системы"
+
+#: app/steps/step_result.go:83
+msgid "Selected disk"
+msgstr "Выбранный диск"
+
+#: app/steps/step_result.go:84
+msgid "Filesystem"
+msgstr "Файловая система"
+
+#: app/steps/step_result.go:90
+msgid "Disk encryption"
+msgstr "Шифрование диска"
+
+#: app/steps/step_result.go:96
+msgid "Start install"
+msgstr "Начать установку"
+
+#: app/steps/step_user.go:50
+msgid "Login"
+msgstr "Логин"
+
+#: app/steps/step_user.go:70
+msgid "Repeat password"
+msgstr "Повторите пароль"
+
+#: app/steps/step_user.go:107
+msgid "Username and password cannot be empty."
+msgstr "Имя пользователя и пароль не могут быть пустыми."
+
+#: app/steps/step_user.go:118
+msgid "Passwords do not match. Try again."
+msgstr "Пароли не совпадают. Попробуйте снова."
+
+#: app/utility/user.go:53
+msgid "Sorry, this username is already in use. Please try another one."
+msgstr ""
+"Извините, это имя пользователя уже занято. Пожалуйста, выберите другое."
+
+#: app/utility/user.go:55
+msgid "The username is too long."
+msgstr "Имя пользователя слишком длинное."
+
+#: app/utility/user.go:57
+msgid "The username must start with a lowercase letter from a to z."
+msgstr "Имя пользователя должно начинаться со строчной буквы от a до z."
+
+#: app/utility/user.go:59
+msgid "Sorry, this username is not available. Please try another one."
+msgstr ""
+"Извините, это имя пользователя недоступно. Пожалуйста, выберите другое."
+
+#: app/utility/user.go:61
+msgid ""
+"The username may only consist of lowercase letters (a-z), digits, and the "
+"characters '-' or '_'."
+msgstr ""
+"Имя пользователя может состоять только из строчных букв (a-z), цифр и "
+"символов '-' или '_'."
+
+#: app/utility/user.go:64
+msgid ""
+"This username will be used for creating your home directory and cannot be "
+"changed."
+msgstr ""
+"Это имя пользователя будет использоваться для создания вашей домашней "
+"директории и не может быть изменено."

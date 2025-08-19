@@ -35,7 +35,7 @@ type DiskInfo struct {
 }
 
 // CreateDiskStep – виджет для выбора диска
-func CreateDiskStep(onDiskSelected func(string)) gtk.Widgetter {
+func CreateDiskStep(onDiskSelected func(string, bool, string)) gtk.Widgetter {
 	outerBox := gtk.NewBox(gtk.OrientationVertical, 12)
 	outerBox.SetMarginTop(20)
 	outerBox.SetMarginBottom(20)
@@ -84,6 +84,47 @@ func CreateDiskStep(onDiskSelected func(string)) gtk.Widgetter {
 	descLabel.SetHAlign(gtk.AlignCenter)
 	centerBox.Append(descLabel)
 
+	// Галочка шифрования диска
+	encryptBox := gtk.NewBox(gtk.OrientationHorizontal, 10)
+	encryptBox.SetHAlign(gtk.AlignCenter)
+	encryptBox.SetMarginTop(20)
+
+	encryptCheck := gtk.NewCheckButton()
+	encryptCheck.SetActive(true) // По умолчанию включено
+	encryptLabel := gtk.NewLabel(lib.T_("Encrypt disk with LUKS"))
+	encryptLabel.SetMarginStart(10)
+
+	encryptBox.Append(encryptCheck)
+	encryptBox.Append(encryptLabel)
+	centerBox.Append(encryptBox)
+
+	// Поле для пароля LUKS
+	passwordBox := gtk.NewBox(gtk.OrientationVertical, 5)
+	passwordBox.SetHAlign(gtk.AlignCenter)
+	passwordBox.SetMarginTop(10)
+
+	passwordLabel := gtk.NewLabel(lib.T_("LUKS password:"))
+	passwordLabel.SetHAlign(gtk.AlignStart)
+	passwordEntry := gtk.NewPasswordEntry()
+	passwordEntry.SetSizeRequest(300, -1)
+	passwordEntry.SetShowPeekIcon(true)
+	passwordEntry.Object.SetObjectProperty("placeholder-text", lib.T_("Minimum 4 characters"))
+
+	passwordBox.Append(passwordLabel)
+	passwordBox.Append(passwordEntry)
+	centerBox.Append(passwordBox)
+
+	// Показать/скрыть поле пароля в зависимости от галочки
+	updatePasswordVisibility := func() {
+		isEncrypted := encryptCheck.Active()
+		passwordBox.SetVisible(isEncrypted)
+	}
+	updatePasswordVisibility()
+
+	encryptCheck.ConnectToggled(func() {
+		updatePasswordVisibility()
+	})
+
 	buttonBox := gtk.NewBox(gtk.OrientationHorizontal, 20)
 	buttonBox.SetHAlign(gtk.AlignCenter)
 	buttonBox.SetMarginTop(20)
@@ -95,13 +136,45 @@ func CreateDiskStep(onDiskSelected func(string)) gtk.Widgetter {
 	buttonBox.Append(chooseBtn)
 	outerBox.Append(buttonBox)
 
+	// Функция для проверки валидности формы
+	validateForm := func() {
+		isEncrypted := encryptCheck.Active()
+		luksPassword := passwordEntry.Text()
+
+		isValid := true
+		if isEncrypted {
+			// Если шифрование включено, пароль должен быть минимум 4 символа
+			if len(luksPassword) < 4 {
+				isValid = false
+			}
+		}
+
+		chooseBtn.SetSensitive(isValid)
+	}
+
+	// Изначальная проверка
+	validateForm()
+
+	// Проверка при изменении галочки шифрования
+	encryptCheck.ConnectToggled(func() {
+		updatePasswordVisibility()
+		validateForm()
+	})
+
+	// Проверка при изменении пароля
+	passwordEntry.ConnectChanged(func() {
+		validateForm()
+	})
+
 	chooseBtn.ConnectClicked(func() {
 		active := combo.Active()
 		if active < 0 {
 			return
 		}
 		chosenDisk := disks[active].Path
-		onDiskSelected(chosenDisk)
+		isEncrypted := encryptCheck.Active()
+		luksPassword := passwordEntry.Text()
+		onDiskSelected(chosenDisk, isEncrypted, luksPassword)
 	})
 
 	return outerBox

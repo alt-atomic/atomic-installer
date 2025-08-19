@@ -38,13 +38,13 @@ func (i *InstallerViewService) getStepTitles() []string {
 	return []string{
 		fmt.Sprintf("1. %s", lib.T_("Language selection")),
 		fmt.Sprintf("2. %s", lib.T_("Device check")),
-		fmt.Sprintf("2. %s", lib.T_("Image selection")),
-		fmt.Sprintf("3. %s", lib.T_("Disk selection")),
-		fmt.Sprintf("4. %s", lib.T_("Filesystem selection")),
-		fmt.Sprintf("5. %s", lib.T_("Bootloader selection")),
-		fmt.Sprintf("6. %s", lib.T_("User selection")),
-		fmt.Sprintf("7. %s", lib.T_("Summary")),
-		fmt.Sprintf("8. %s", lib.T_("Installation")),
+		fmt.Sprintf("3. %s", lib.T_("Image selection")),
+		fmt.Sprintf("4. %s", lib.T_("Disk selection")),
+		fmt.Sprintf("5. %s", lib.T_("Filesystem selection")),
+		fmt.Sprintf("6. %s", lib.T_("Bootloader selection")),
+		fmt.Sprintf("7. %s", lib.T_("User selection")),
+		fmt.Sprintf("8. %s", lib.T_("Summary")),
+		fmt.Sprintf("9. %s", lib.T_("Installation")),
 	}
 }
 
@@ -113,6 +113,8 @@ func (i *InstallerViewService) OnActivate(app *adw.Application) {
 	var chosenUsername string
 	var chosenPassword string
 	var chosenLang string
+	var chosenCrypto bool
+	var chosenLuksPassword string
 
 	stepDone := make([]bool, stepsCount)
 
@@ -196,8 +198,10 @@ func (i *InstallerViewService) OnActivate(app *adw.Application) {
 		// Шаг 3: Выбор диска
 		func() gtk.Widgetter {
 			return steps.CreateDiskStep(
-				func(disk string) {
+				func(disk string, crypto bool, luksPassword string) {
 					chosenDisk = disk
+					chosenCrypto = crypto
+					chosenLuksPassword = luksPassword
 					stepDone[3] = true
 					nextBtn.SetSensitive(true)
 					currentStep++
@@ -252,6 +256,7 @@ func (i *InstallerViewService) OnActivate(app *adw.Application) {
 				chosenBootMode,
 				chosenUsername,
 				chosenPassword,
+				chosenCrypto,
 				func() {
 					stepDone[7] = true
 					nextBtn.SetSensitive(true)
@@ -260,7 +265,7 @@ func (i *InstallerViewService) OnActivate(app *adw.Application) {
 				},
 			)
 		},
-		// Шаг 7: Установка
+		// Шаг 8: Установка
 		func() gtk.Widgetter {
 			return steps.CreateInstallProgressStep(
 				window,
@@ -271,6 +276,8 @@ func (i *InstallerViewService) OnActivate(app *adw.Application) {
 				chosenBootMode,
 				chosenUsername,
 				chosenPassword,
+				chosenCrypto,
+				chosenLuksPassword,
 				func() {
 					os.Exit(0)
 				},

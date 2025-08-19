@@ -1,0 +1,13 @@
+app/gui.go
+app/install/status.go
+app/steps/step_boot.go
+app/steps/step_check.go
+app/steps/step_disk.go
+app/steps/step_filesystem.go
+app/steps/step_image.go
+app/steps/step_language.go
+app/steps/step_process.go
+app/steps/step_result.go
+app/steps/step_user.go
+app/utility/user.go
+lib/i18n.go

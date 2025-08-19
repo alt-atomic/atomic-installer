@@ -27,6 +27,7 @@ import (
 // CreateSummaryStep – финальный шаг, отображающий все выбранные параметры.
 func CreateSummaryStep(
 	chosenLang, chosenImage, chosenDisk, chosenFilesystem, chosenBootMode, chosenUsername, chosenPassword string,
+	chosenCrypto bool,
 	onInstall func(),
 ) gtk.Widgetter {
 	outerBox := gtk.NewBox(gtk.OrientationVertical, 12)
@@ -81,6 +82,12 @@ func CreateSummaryStep(
 	addRow(lib.T_("System language"), chosenLang)
 	addRow(lib.T_("Selected disk"), chosenDisk)
 	addRow(lib.T_("Filesystem"), chosenFilesystem)
+
+	cryptoText := lib.T_("No")
+	if chosenCrypto {
+		cryptoText = lib.T_("Yes")
+	}
+	addRow(lib.T_("Disk encryption"), cryptoText)
 
 	buttonBox := gtk.NewBox(gtk.OrientationHorizontal, 20)
 	buttonBox.SetHAlign(gtk.AlignCenter)
