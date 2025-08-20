@@ -706,6 +706,10 @@ func (i *InstallerService) installToFilesystem(ctx context.Context) error {
 		if err = i.configureTimezone(ostreeDeployPath, timezone); err != nil {
 			return fmt.Errorf("ошибка установки timezone: %v", err)
 		}
+
+		if err = i.configureHostname(ostreeDeployPath, "atomic"); err != nil {
+			return fmt.Errorf("ошибка установки timezone: %v", err)
+		}
 	}
 
 	if err = i.mountDisk(partitions["boot"].Path, mountPointBoot, "rw"); err != nil {
@@ -718,7 +722,7 @@ func (i *InstallerService) installToFilesystem(ctx context.Context) error {
 
 	// Генерация fstab
 	lib.Log.Infof("Генерация fstab...")
-	if err := i.generateFstab(mountPoint, partitions, i.data.TypeFilesystem); err != nil {
+	if err = i.generateFstab(mountPoint, partitions, i.data.TypeFilesystem); err != nil {
 		return fmt.Errorf("ошибка генерации fstab: %v", err)
 	}
 
@@ -776,19 +780,32 @@ func (i *InstallerService) buildBootcCommand(partitions map[string]PartitionInfo
 
 // configureHostname задаёт имя хоста через chroot
 func (i *InstallerService) configureHostname(rootPath, hostname string) error {
-	chrootCmd := func(args ...string) *exec.Cmd {
-		cmd := exec.Command("chroot", append([]string{rootPath}, args...)...)
-		cmd.Stdout = os.Stdout
-		cmd.Stderr = os.Stderr
-		return cmd
+	hostnameFile := filepath.Join(rootPath, "etc", "hostname")
+	if err := os.WriteFile(hostnameFile, []byte(hostname+"\n"), 0644); err != nil {
+		return fmt.Errorf("ошибка создания /etc/hostname: %v", err)
 	}
 
-	cmd := chrootCmd("hostnamectl", "set-hostname", hostname)
-	if err := cmd.Run(); err != nil {
-		return fmt.Errorf("ошибка установки hostname %s: %v", hostname, err)
+	// Обновляем /etc/hosts
+	hostsFile := filepath.Join(rootPath, "etc", "hosts")
+	hostsContent := fmt.Sprintf("127.0.0.1 localhost %s\n::1 localhost %s\n", hostname, hostname)
+
+	// Читаем существующий hosts если есть
+	if existingHosts, err := os.ReadFile(hostsFile); err == nil {
+		lines := strings.Split(string(existingHosts), "\n")
+		var filteredLines []string
+		for _, line := range lines {
+			if !strings.Contains(line, "127.0.0.1") && !strings.Contains(line, "::1") && strings.TrimSpace(line) != "" {
+				filteredLines = append(filteredLines, line)
+			}
+		}
+		hostsContent = hostsContent + strings.Join(filteredLines, "\n") + "\n"
 	}
 
-	lib.Log.Infof("Имя хоста %s успешно настроено.", hostname)
+	if err := os.WriteFile(hostsFile, []byte(hostsContent), 0644); err != nil {
+		return fmt.Errorf("ошибка обновления /etc/hosts: %v", err)
+	}
+
+	lib.Log.Infof("Hostname %s успешно настроен в /etc/hostname и /etc/hosts", hostname)
 	return nil
 }
 
